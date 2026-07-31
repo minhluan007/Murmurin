@@ -1,0 +1,276 @@
+{%- assign isLang = cart.attributes.language -%}
+
+{%- assign homePage = 'Trang chủ' -%}
+{%- assign accountPage = 'Tài khoản' -%}
+{%- if isLang == 'en' -%}
+	{%- assign homePage = 'Home' -%}
+	{%- assign accountPage = 'Account' -%}
+{%- endif -%}
+<nav aria-label="breadcrumb" id="breadcrumb">
+	<ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+		<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<a href="/" target="_self" itemprop="item"><span itemprop="name">{{ homePage }}</span></a>
+			<meta itemprop="position" content="1" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- if template contains 'page' -%}
+		{%- assign pageTitle = page.title -%}
+		{%- if isLang == 'en' -%}
+			{%- assign checkPageTitle = page.metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if checkPageTitle != '' -%}
+				{%- assign pageTitle = checkPageTitle -%}
+			{%- endif -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}{{page.url}}"><span itemprop="name">{{ pageTitle }}</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains 'search' -%}
+		{%- assign searchPage = 'Tìm kiếm' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign searchPage = 'Search' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" >
+			<span itemprop="item" content="{{shop.url}}/search?&q={{search.terms | strip_html | escape}}"><span itemprop="name">{{ searchPage }}</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains 'blog' -%}		
+			{%- assign blogPage = blog.title -%}
+			{%- if blogPage contains '|' -%}
+				{%- assign getBlogPage = blog.title | split: '|' -%}
+				{%- assign blogPage = getBlogPage[0] -%}
+				{%- if isLang == 'en' -%}
+					{%- assign blogPage = getBlogPage[1] -%}
+					{%- if blog.title == 'Tất cả bài viết' -%}
+						{%- assign blogPage = 'All blog' -%}
+					{%- endif -%}
+				{%- endif -%}
+			{%- endif -%}
+		{%- if current_tags -%}
+		<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<a href="{{shop.url}}/blogs/all" itemprop="item">
+				<span itemprop="name">{{ blogPage }}</span>
+			</a>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			{%- for tag in blog.all_tags -%}
+			{%- assign a = tag | handleize -%}
+			{%- if blog.current_tag == a -%}
+			<span itemprop="item" content="{{shop.url}}/blogs/all/tagged/{{ tag }}"><span itemprop="name">{{ tag }}</span></span>
+			{%- break -%}
+			{%- endif -%}
+			{%- endfor -%}			
+			<meta itemprop="position" content="3" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- else -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}/blogs/{{ blog.handle }}"><span itemprop="name">{{ blogPage }}</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- endif -%}
+		{%- elseif template contains 'article' -%}
+		{%- assign getBlogPage = blog.title | split: '|' -%}
+		{%- assign getArticlePage = article.title | split: '|' -%}
+		{%- assign blogPage = getBlogPage[0] -%}
+		{%- assign articlePage = getArticlePage[0] -%}
+		{%- if isLang == 'en' -%}
+			{%- assign blogPage = getBlogPage[1] -%}
+			{%- assign articlePage = getArticlePage[1] -%}
+		{%- endif -%}
+		<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<a href="{{ blog.url }}" itemprop="item">
+				<span itemprop="name">{{ blogPage | default: blog.title }}</span>
+			</a>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}{{ article.url }}"><span itemprop="name">{{ articlePage | default: article.title }}</span></span>
+			<meta itemprop="position" content="3" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains 'list-collections' -%}
+		{%- assign listPage = 'Danh mục' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign listPage = 'List collection' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}/collections"><span itemprop="name">{{ listPage }}</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains 'collection' and collection.handle -%}
+		{%- assign listPage = 'Danh mục' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign listPage = 'List collection' -%}
+		{%- endif -%}
+		{%- if current_tags -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}/collections/all/{{ current_tags | handleize }}">	Tag: <span itemprop="name">"{{ current_tags.first | capitalize }}"</span></span>
+			<meta itemprop="position" content="3" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- else -%}
+		{%- if collection.handle == 'all' -%}
+		{%- assign allCollection = 'Tất cả sản phẩm' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign allCollection = 'All Products' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}/collections/{{collection.handle}}"><span itemprop="name">{{ allCollection }}</span></span>
+			<meta itemprop="position" content="3" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- else -%}
+		{%- assign collectionPage = collection.title -%}
+		{%- if isLang == 'en' -%}
+			{%- assign checkCollection = collection.metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if checkCollection != '' -%}
+				{%- assign collectionPage = checkCollection -%}
+			{%- endif -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}/collections/{{collection.handle}}"><span itemprop="name">{{ collectionPage }}</span></span>
+			<meta itemprop="position" content="3" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- endif -%}
+		{%- endif -%}
+		{%- elseif template contains 'product' -%}
+		{%- if collection.url -%}
+		{%- assign collectionPage = collection.title -%}
+		{%- if isLang == 'en' -%}
+			{%- assign checkCollection = collections[collection.handle].metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if checkCollection != '' -%}
+				{%- assign collectionPage = checkCollection -%}
+			{%- endif -%}
+		{%- endif -%}
+		{%- capture url -%}/collections/{{ collection.handle }}{%- endcapture -%}
+		<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<a href="{{shop.url}}{{ url }}" target="_self" itemprop="item">
+				<span itemprop="name">{{ collectionPage }}</span>
+			</a>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- endif -%}
+		{%- assign productPage = product.title -%}
+		{%- if isLang == 'en' -%}
+			{%- assign checkProduct = product.metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if checkProduct != '' -%}
+				{%- assign productPage = checkProduct -%}
+			{%- endif -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{shop.url}}{{ product.url }}">
+				<span class="" itemprop="name">{{ productPage }}</span>
+			</span>
+			<meta itemprop="position" content="3" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains 'cart' -%}
+		{%- assign cartPage = 'Giỏ hàng' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign cartPage = 'Cart' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" >
+			<span itemprop="item" content="{{shop.url}}/cart"><span itemprop="name">{{ cartPage }} ({{ cart.item_count }})</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains "404" -%}
+		{%- assign 404Page = 'Lỗi 404' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign 404Page = 'Error 404' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+			<span itemprop="item" content="{{ canonical_url }}"><span itemprop="name">{{ 404Page }}</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- elseif template contains "customers[account]" -%}
+		<li class="breadcrumb-item">
+			<a href="/account" target="_self">
+				{{ accountPage }}
+				<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+			</a>
+		</li>
+		{%- if template contains "customers[account].recently" -%}
+		{%- assign recentlyPage = 'Đã xem gần đây' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign recentlyPage = 'Recently' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active"><span>{{ recentlyPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elsif template contains "customers[account].wishlist" -%}
+		{%- assign wishlistPage = 'Danh sách yêu thích' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign wishlistPage = 'Wishlist' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active"><span>{{ wishlistPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elsif template contains "customers[account].info" -%}
+		{%- assign infoPage = 'Thông tin' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign infoPage = 'Infomation' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item active"><span>{{ infoPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- endif -%}
+		{%- elseif template contains "customers[register]" -%}
+		{%- assign registerPage = 'Ðăng ký' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign registerPage = 'Register' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item">
+			<a href="/account" target="_self">{{ accountPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a>
+		</li>
+		<li class="breadcrumb-item active"><span>{{ registerPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elseif template contains "customers[login]" -%}
+		{%- assign loginPage = 'Ðăng nhập' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign loginPage = 'Login' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item"><a href="/account" target="_self">{{ accountPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a></li>
+		<li class="breadcrumb-item active"><span>{{ loginPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elseif template contains "customers[activate_account]" -%}
+		{%- assign activePage = 'Kích hoạt' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign activePage = 'Active' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item"><a href="/account" target="_self">{{ accountPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a></li>
+		<li class="breadcrumb-item active"><span>{{ activePage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elseif template contains "customers[reset_password]" -%}
+		{%- assign resetPage = 'Thiết lập lại mật khẩu' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign resetPage = 'Reset Password' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item"><a href="/account" target="_self">{{ accountPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a></li>
+		<li class="breadcrumb-item active"><span>{{ resetPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elseif template contains "customers[addresses]" -%}
+		{%- assign addressesPage = 'Ðịa chỉ' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign addressesPage = 'Addresses' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item"><a href="/account" target="_self">{{ accountPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a></li>
+		<li class="breadcrumb-item active"><span>{{ addressesPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></span></li>
+		{%- elseif template contains "customers[order]" -%}
+		{%- assign orderPage = 'Đơn hàng' -%}
+		{%- if isLang == 'en' -%}
+			{%- assign orderPage = 'Order' -%}
+		{%- endif -%}
+		<li class="breadcrumb-item"><a href="/account" target="_self">{{ accountPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a></li>
+		<li class="breadcrumb-item"><a href="/account" target="_self">{{ orderPage }}<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg></a></li>
+		<li class="breadcrumb-item active"><span>{{ order.name }}</span></li>
+		{%- else -%}		
+		<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" >
+			<span itemprop="item" content=""><span itemprop="name">{{ page_title | strip_html | escape }}</span></span>
+			<meta itemprop="position" content="2" />
+			<svg xmlns="http://www.w3.org/2000/svg" width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M1 1L5.5 5.5L1 10" stroke="#787878" stroke-linecap="square"/></svg>
+		</li>
+		{%- endif -%}
+	</ol>
+</nav>

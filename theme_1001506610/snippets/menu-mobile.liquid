@@ -1,0 +1,49 @@
+<nav id="mp-menu" class="mp-menu">
+	<div class="mp-level">
+		<ul class="lv1">
+			{% for link1 in linklists.main-menu.links %}
+			{% if linklists[link1.handle].links == empty %}
+			<li><a href="{{ link1.url }}">{{ link1.title }}</a></li>
+			{% else %}
+			<li class="has-children icon icon-arrow-left">
+				<a href="{{ link1.url }}">{{ link1.title }}</a>
+				{%capture count_link %}{{ linklists[link1.handle].links.size }}{%endcapture%}
+				<div class="mp-level">
+					<h2 >{{ link1.title }}</h2>
+					<a class="mp-back" href="#">Quay lại</a>
+					<ul class="cd-secondary-nav count-nav-{{count_link }}">
+						{% for link2 in linklists[link1.handle].links %}
+						{% if linklists[link2.handle].links == empty %}
+						<li><a href="{{ link2.url }}">{{ link2.title }}</a></li>
+						{% else %}
+						<li class="has-children icon icon-arrow-left">
+							<a href="{{ link2.url }}">{{ link2.title }}</a>
+							<div class="mp-level">
+								<h2 >{{ link2.title }}</h2>
+								<a class="mp-back" href="#">Quay lại</a>
+								<ul >
+									{% for link3 in linklists[link2.handle].links %}						
+									<li><a href="{{ link3.url }}">{{ link3.title }}</a></li>				
+									{% endfor %}
+								</ul>
+							</div>
+						</li>
+						{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			</li>
+			{% endif %}
+			{% endfor %}
+		</ul>
+	</div>
+</nav>
+
+<script>
+new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ), {
+	type : 'cover'
+} );
+</script>
+{% comment %}
+include các file :modernizr.custom.js,classie.js,mlpushmenu.js
+{% endcomment %}

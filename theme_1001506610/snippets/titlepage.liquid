@@ -1,0 +1,89 @@
+
+<title>
+	{%- assign language = cart.attributes.language -%}
+	{%- assign getPageTitle = page_title -%}
+	
+	{%- if template contains 'article' -%}
+		{%- assign getPageTitle = article.title | split: '|' | first -%}
+	{%- endif -%}
+	
+	{%- if language == 'en' -%}
+	
+		{%- if template contains 'article' -%}
+			{%- assign getPageTitle = article.title | split: '|' | last -%}
+		{%- endif -%}
+	
+		{%- if template contains 'page' -%}
+			{%- assign getTitlePageEN = page.metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if getTitlePageEN != '' -%}
+				{%- assign getPageTitle = getTitlePageEN | append: ' - GIGI Vietnam' -%}
+			{%- endif -%}
+		{%- endif -%}
+	
+		{%- if template contains 'collection' -%}
+			{%- assign getTitlePageEN = collection.metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if getTitlePageEN != '' -%}
+				{%- assign getPageTitle = getTitlePageEN | append: ' - GIGI Vietnam' -%}
+			{%- endif -%}
+		{%- endif -%}
+	
+		{%- if template contains 'product' -%}
+			{%- assign getTitlePageEN = product.metafields.hrvmultilang_en.title | append: '' -%}
+			{%- if getTitlePageEN != '' -%}
+				{%- assign getPageTitle = getTitlePageEN | append: ' - GIGI Vietnam' -%}
+			{%- else -%}
+				{%- assign getPageTitle = product.title | append: ' - GIGI Vietnam' -%}
+			{%- endif -%}
+		{%- endif -%}
+	
+	{%- else -%}
+	
+		{%- if template contains 'product' -%}
+			{%- assign getPageTitle = product.title -%}
+		{%- endif -%}
+	
+	{%- endif -%}
+	
+	{%- capture defaultTitle -%}
+		{{ getPageTitle }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %} - GIGI Việt Nam
+	{%- endcapture -%}
+
+
+	{%- if template contains 'index' -%}
+	
+		{%- if language == 'en' -%}
+			GIGI Vietnam
+		{%- else -%}
+			GIGI Việt Nam
+		{%- endif -%}
+	
+	{%- else -%}
+	
+		{%- if language == 'en' -%}
+			{%- if template contains 'cart' -%}
+				Cart - GIGI Vietnam
+			{%- elsif template contains 'search' -%}
+				Search - GIGI Vietnam
+			{%- elsif template contains 'login' -%}
+				Login - GIGI Vietnam
+			{%- elsif template contains 'register' -%}
+				Register - GIGI Vietnam
+			{%- elsif template contains 'wishlist' -%}
+				Wishlist - GIGI Vietnam
+			{%- elsif template contains 'addresses' -%}
+				Addresses - GIGI Vietnam
+			{%- elsif template contains 'orders' -%}
+				Orders - GIGI Vietnam
+			{%- elsif template contains 'order' -%}
+				Detail Order - GIGI Vietnam
+			{%- elsif template contains 'account' -%}
+				Account - GIGI Vietnam
+			{%- else -%}
+				{{defaultTitle}}
+			{%- endif -%}
+		{%- else -%}
+			{{defaultTitle}}
+		{%- endif -%}
+	
+	{%- endif -%}
+</title>

@@ -1,0 +1,136 @@
+<div id="blog">
+	{% paginate blog.articles by settings.pagination_blog_limit %}
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="main-content row">
+			{%include 'breadcrumb'%}
+			<!-- Begin content -->
+			<div class="blog-content col-md-12">
+				<div class="row"> 
+					<div class="col-md-9" id="blog-container">
+						<div class="">
+							<div class="col-md-12 articles clearfix" id="layout-page">
+								<span class="header-page">
+									<h2>{{blog.title}}</h2>
+								</span>
+								{%if blog.articles.size == 0%}
+								<p class="col-md-12">Chưa có bài viết nào trong mục này</p>
+								{%else%}
+								<!-- Begin: Nội dung blog -->      
+								{% for article in blog.articles limit: settings.pagination_blog_limit %}
+								<div class="news-content">
+									<div class="col-md-2 hidden-xs hidden-sm">
+										<!--Begin:ngày giờ đăng bài viết  -->
+										<div class="author-date">
+											<ul class="date-post">
+												<li> 
+													<i class="icon-time"></i>
+													<p>
+														{{ article.published_at | date: '%d/%m/%Y' }}
+													</p>
+												</li>
+											</ul>
+										</div>
+										<!--End:ngày giờ đăng bài viết  -->
+										<!--Begin: số bình luận  -->
+										<div class="article-count">
+											<ul class="count-comment">
+												{% if blog.comments_enabled? %}
+												<li>
+													<i class="icon-comment"></i>
+													<a href="{{ article.url }}#comments">
+														{{ article.comments_count }}<span> {{ article.comments_count | pluralize: 'Bình luận','Bình luận' }}</span>
+													</a>
+												</li>
+												{% endif %}
+											</ul>
+										</div>
+
+										<!--End: số đăng bình luận   -->
+									</div>
+									<!-- mobile -->
+
+									<div class="col-xs-12 col-sm-12 hidden-lg hidden-md">
+										<!-- Begin: Nội dung bài viết -->
+										<h2 class="title-article"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+										<div class="body-content">
+											<ul class="info-more">
+												<li><i class="icon-info icon-hot clearfix"></i> <a href="#"> {{blog.title}}	</a> </li>
+												<li><i class="icon-time"></i>
+													<p>
+														{{ article.published_at | date: '%d/%m/%Y' }}
+													</p>
+												</li>	
+												{% if blog.comments_enabled? %}
+												<li>
+
+													<i class="comment-icon fa fa-comments-o"></i>
+													<a href="{{ article.url }}#comments">
+														{{ article.comments_count }}<span> {{ article.comments_count | pluralize: 'Bình luận','Bình luận' }}</span>
+													</a>
+												</li>
+												{% endif %}										
+
+											</ul>
+
+										</div>
+										<!-- End: Nội dung bài viết -->	
+									</div>
+
+
+									{%if  article.excerpt != null and article.excerpt != ''  %}
+									<div class="col-md-5 col-xs-12 col-sm-12 img-article">
+										{{ article.excerpt }}
+									</div>
+									{%endif%}
+
+									<div class="{%if article.excerpt != null and  article.excerpt != ''%} col-md-5 {%else%}col-sm-9{%endif%} hidden-xs hidden-sm" >
+										<!-- Begin: Nội dung bài viết -->
+										<h2 class="title-article"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+										<div class="body-content">
+											<ul class="info-more">
+												<li><i class="icon-info icon-hot clearfix"></i> <a href="#"> {{blog.title}}	</a> </li>
+											</ul>
+											<p>{{ article.content | strip_html | truncatewords: 30 }}</p>
+										</div>
+										<!-- End: Nội dung bài viết -->	
+										<a class="readmore clear-fix" href="{{ article.url }}" role="button">Xem tiếp <span class="fa fa-angle-double-right"></span></a>
+									</div>
+
+
+									<div class="col-xs-12 hidden-lg hidden-md">
+										<p class="text-mobi-blog">{{ article.content | strip_html | truncatewords: 30 }}</p>
+
+										<a class="readmore clear-fix" href="{{ article.url }}" role="button">Xem tiếp <span class="fa fa-angle-double-right"></span></a>
+
+									</div>
+
+
+
+
+								</div>
+								<hr class="line-blog"/>
+								{% endfor %}
+								{%endif%}
+								<!-- End: Nội dung blog --> 
+
+							</div>
+							<div class="col-md-12">
+								<!-- Begin: Phân trang blog --> 
+								{% include 'pagination-default' %}
+								<!-- End: Phân trang blog --> 
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3 clearfix">
+						<!-- Begin sidebar blog -->
+						{% include 'blog_sidebar' %}
+						<!-- End sidebar blog -->
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- End content -->
+		{% endpaginate %}
+	</div>

@@ -1,0 +1,131 @@
+var GIGI = {}
+GIGI.Module = {
+  findTokenVerification: function($form){
+    var token = $form.find('input[name="__RequestVerificationToken"]').val();
+    return token;
+  },
+  openLoading: function(callback){
+    $('.loading-ovl').addClass('open');
+    if(typeof callback === "function"){
+      return callback();
+    }
+  },
+  removeLoading: function(callback){
+    $('.loading-ovl').removeClass('open');
+    if(typeof callback === "function"){
+      return callback();
+    }
+  },
+	toastShow: function(mess){
+		var $toast =  $('.toast');
+		var textWarning = mess;
+		$toast.find('.toast-body').text(textWarning);
+		new bootstrap.Toast($toast[0]).show();
+	},
+  mathLabelSale: function(number){
+		var phanNguyen = Math.floor(number);
+		var phanThapPhan = number - phanNguyen;
+		if (phanThapPhan >= 0.5) {
+			return Math.ceil(number);
+		} 
+		else {
+			return Math.floor(number);
+		}
+	},
+  validateEmail: function($email) {
+		var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+		return emailReg.test( $email );
+	},
+  getCartSidebar: function(callback){
+    $.get('/cart.js', function(data){
+      cartJS = data;
+      LEE.Module.cartJSItemInAdmin(function(){
+        //LEE.SidebarCart.renderItem();
+        $('body').addClass('open-sidebar-cart');
+        if(typeof callback === "function"){
+  				return callback();
+  			}
+      });
+    });
+  },
+  getCart: function(callback){
+    $.get('/cart.js', function(data){
+      cartJS = data;
+      LEE.Module.cartJSItemInAdmin(function(){
+        if(typeof callback === "function"){
+  				return callback();
+  			}
+      });
+    });
+  },
+  cartJSItemInAdmin: function(callback){
+		var self = this;
+		
+		const promises = window.cartJS.items.map(item => {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					type: "GET",
+					url: item.url + ".js",
+					success: function(data) {
+						item.inAdmin = data;
+						resolve();
+					},
+					error: function(error) {
+						reject(error);
+					}
+				});
+			});
+		});
+		
+		Promise.all(promises)
+			.then(() => {
+			if(typeof callback === "function"){
+				return callback();
+			}
+		}).catch(error => {
+
+		});
+	},
+}
+GIGI.Global = {
+  init: function(){
+    
+  }
+}
+GIGI.Index = {
+  init: function(){
+    var that = this;
+    that.swiperTopbar();
+    that.swiperMainSlider();
+  },
+  swiperTopbar: function(){
+    new Swiper('.topbar-swiper', {
+      loop: true,
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+      },
+      speed: 800,
+      effect: 'slide'
+    });
+  },
+  swiperMainSlider: function(){
+    new Swiper('.banner-swiper', {
+      loop: true,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+      },
+      speed: 1000
+    });
+  }
+}
+GIGI.Init = function(){
+  GIGI.Global.init();
+  if(shop.template.indexOf('index') != -1){
+    GIGI.Index.init();
+  }
+}
+$(document).ready(function(){
+	GIGI.Init();
+});
