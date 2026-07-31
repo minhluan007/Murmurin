@@ -1,1 +1,134 @@
-/* */
+{%- assign home_collection = collections.frontpage -%}
+{%- if home_collection.products.size == 0 -%}
+  {%- assign home_collection = collections.all -%}
+{%- endif -%}
+
+<section class="home-hero">
+  <div class="home-hero__media">
+    <img
+      src="https://cdn.hstatic.net/files/1000173990/file/bachans-header.png"
+      alt="Savor Every Last Bite"
+      class="home-hero__image"
+      loading="eager"
+    >
+  </div>
+  <div class="home-hero__content container">
+    <h1 class="home-hero__title">SAVOR EVERY. LAST. BITE.</h1>
+    <a href="/collections/all" class="home-hero__link" title="Shop sauces">
+      Shop sauces
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<section class="home-products">
+  <div class="home-products__grid">
+    {%- for product in home_collection.products limit: 6 -%}
+      <div class="product-loop">
+        <a href="{{ product.url }}" class="product-loop__link" title="{{ product.title }}">
+          <div class="product-loop__media">
+            <div class="swiper product-loop__swiper">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <img
+                    src="https://file.hstatic.net/1000173990/file/gel-rua-mat-simple-purifying-gel-wash-150ml_6af792c9aea346ffa1b257df2018ef83.jpeg"
+                    alt="{{ product.featured_image.alt | default: product.title }}"
+                    loading="lazy"
+                  >
+                </div>
+                {%- if product.images.size > 1 -%}
+                  <div class="swiper-slide">
+                    <img
+                      src="https://file.hstatic.net/1000173990/file/sua-rua-mat-simple-mau-trang_7a1e0583d86646cd93932e6e9f14d38a.jpeg"
+                      alt="{{ product.images[1].alt | default: product.title }}"
+                      loading="lazy"
+                    >
+                  </div>
+                {%- else -%}
+                  <div class="swiper-slide">
+                    <img
+                      src="https://file.hstatic.net/1000173990/file/sua-rua-mat-simple-mau-trang_7a1e0583d86646cd93932e6e9f14d38a.jpeg"
+                      alt="{{ product.title }}"
+                      loading="lazy"
+                    >
+                  </div>
+                {%- endif -%}
+              </div>
+              <button type="button" class="product-loop__nav product-loop__nav--prev" aria-label="Previous image">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button type="button" class="product-loop__nav product-loop__nav--next" aria-label="Next image">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <span class="product-loop__choose">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.608 9.421V6.906H3.392v8.016c0 .567.224 1.112.624 1.513.4.402.941.627 1.506.627H8.63M8.818 3h2.333c.618 0 1.212.247 1.649.686a2.35 2.35 0 0 1 .683 1.658v1.562H6.486V5.344c0-.622.246-1.218.683-1.658A2.33 2.33 0 0 1 8.82 3"></path><path stroke="#000" stroke-linecap="round" stroke-width="1.5" d="M14.608 12.563v5m2.5-2.5h-5"></path>
+              </svg>
+              CHOOSE
+            </span>
+          </div>
+          <div class="product-loop__info">
+            <div class="product-loop__top">
+              <h3 class="product-loop__title">{{ product.title }}</h3>
+              <span class="product-loop__price">{{ product.price | money }}</span>
+            </div>
+            {%- if product.description != blank -%}
+              <p class="product-loop__desc">{{ product.description | strip_html | truncate: 80 }}</p>
+            {%- endif -%}
+          </div>
+        </a>
+      </div>
+    {%- else -%}
+      {%- for i in (1..6) -%}
+        <div class="product-loop product-loop--placeholder">
+          <div class="product-loop__media">
+            <div class="product-loop__placeholder"></div>
+          </div>
+          <div class="product-loop__info">
+            <div class="product-loop__top">
+              <h3 class="product-loop__title">PRODUCT {{ i }}</h3>
+              <span class="product-loop__price">$9.49 CAD</span>
+            </div>
+            <p class="product-loop__desc">A bold, fresh flavor for every meal.</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+<section class="home-video">
+  <div class="home-video__inner">
+    <div class="home-video__media" data-youtube-id="ScMzIvxBSi4">
+      <img
+        src="https://cdn.hstatic.net/files/1000173990/file/placeholder_283_bachanfam_9869_4a3bb2a5-7d08-4620-aac3-64cea8cdb0bb.jpg"
+        alt="A family tradition of bold, fresh flavor"
+        class="home-video__poster"
+        loading="lazy"
+      >
+      <button type="button" class="home-video__play" aria-label="Play video">
+        <svg width="24" height="28" viewBox="0 0 24 28" fill="none" aria-hidden="true">
+          <path d="M2 2L22 14L2 26V2Z" fill="currentColor"/>
+        </svg>
+      </button>
+      <div class="home-video__iframe-wrap"></div>
+    </div>
+    <div class="home-video__content">
+      <h2 class="home-video__title">A FAMILY TRADITION OF BOLD, FRESH FLAVOR</h2>
+      <div class="home-video__text">
+        <p>
+          For generations, our family has crafted sauces with the freshest ingredients and boldest flavors. Every bottle
+          carries the warmth of our kitchen and the passion we pour into every recipe. Taste the tradition that brings
+          people together around the table.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

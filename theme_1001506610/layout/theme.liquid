@@ -1,56 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 {%- assign language = cart.attributes.language -%}
 <html lang="vi">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-		<meta name="revisit-after" content="1 day" />
-		<meta http-equiv="x-ua-compatible" content="ie=edge">
-		<meta name="HandheldFriendly" content="true">
-		<link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
-		{%- include 'titlepage' -%}
-		{%- if page_description -%}
-			<meta name="description" content="{{ page_description | strip_html | strip_newlines }}" />
-		{%- else -%}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="revisit-after" content="1 day" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="HandheldFriendly" content="true">
+    <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+    {%- include 'titlepage' -%}
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | strip_html | strip_newlines }}" />
+    {%- else -%}
       {%- assign page_description = settings.page_description -%}
       {%- if language == 'en' -%}
         {%- assign page_description = settings.en_page_description -%}
       {%- endif -%}
-			<meta name="description" content="{{ page_description }}" />
-		{%- endif -%}
-		<link rel="canonical" href="{{ canonical_url }}" />
-		<link rel="alternate" href="{{ canonical_url }}" hreflang="vi-vn" />	
-		<meta name="keywords" content="{{ shop.name }}">
+      <meta name="description" content="{{ page_description }}" />
+    {%- endif -%}
+    <link rel="canonical" href="{{ canonical_url }}" />
+    <link rel="alternate" href="{{ canonical_url }}" hreflang="vi-vn" />
+    <meta name="keywords" content="{{ shop.name }}">
 
     {%- assign noIndex = false -%}
     {%- if template contains 'cart' -%}
       {%- assign noIndex = true -%}
     {%- endif -%}
-    
-		{%- if template contains 'search' -%}
-		<meta name="robots" content="noindex, follow" />
+
+    {%- if template contains 'search' -%}
+      <meta name="robots" content="noindex, follow" />
     {%- elsif canonical_url contains 'tagged' -%}
-    <meta name="robots" content="noindex, follow">
+      <meta name="robots" content="noindex, follow">
     {%- elsif noIndex -%}
-    <meta name="robots" content="noindex, nofollow" />
+      <meta name="robots" content="noindex, nofollow" />
     {%- elsif template contains 'article' -%}
-    <meta name="robots" content="index,follow">
-		{%- else -%}
-		<meta name="robots" content="index,follow,noodp">
-		{%- endif -%}
-    
-		{%- include 'master-include' -%}
-    {%- include 'gtm-head' -%}
-		{{ content_for_header }}
-	</head>
-	<body class="template-{{template | split: '.' | first | replace: '' | replace: '[','_' | replace: ']',''}}">
-    {%- include 'gtm-body' -%}
-		{%- include 'header' -%}
-		<main class="wrap-main">
-			{{ content_for_layout }}
-		</main>
-		{%- include 'footer' -%}
-		{%- include 'footer-scripts' -%}
-    <div class="loading-ovl"><div class="load-3"><div class="line"></div><div class="line"></div><div class="line"></div></div></div>
-	</body>
+      <meta name="robots" content="index,follow">
+    {%- else -%}
+      <meta name="robots" content="index,follow,noodp">
+    {%- endif -%}
+
+    {%- include 'master-include' -%}
+    {{ content_for_header }}
+  </head>
+  <body class="template-{{template | split: '.' | first | replace: '' | replace: '[','_' | replace: ']',''}}">
+    {%- include 'header' -%}
+    <main class="wrap-main">
+      {{ content_for_layout }}
+    </main>
+    {%- include 'footer' -%}
+    {%- include 'footer-scripts' -%}
+    <div class="loading-ovl">
+      <div class="load-3">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+    </div>
+  </body>
 </html>

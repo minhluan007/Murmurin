@@ -1,0 +1,23 @@
+ImgWidthAndHeight:
+  enabled: false
+
+DeprecatedTag:
+  enabled: false
+
+VariableName:
+  enabled: false
+
+UnusedAssign:
+  enabled: false
+
+ParserBlockingScript:
+  enabled: false
+
+AssetPreload:
+  enabled: false
+
+RemoteAsset:
+  enabled: false
+
+UnknownFilter:
+  enabled: false

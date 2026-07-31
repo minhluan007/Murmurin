@@ -1,5 +1,5 @@
-var GIGI = {}
-GIGI.Module = {
+var MLPRO = {}
+MLPRO.Module = {
   findTokenVerification: function($form){
     var token = $form.find('input[name="__RequestVerificationToken"]').val();
     return token;
@@ -87,45 +87,121 @@ GIGI.Module = {
 		});
 	},
 }
-GIGI.Global = {
+MLPRO.Global = {
   init: function(){
-    
+    MLPRO.Header.init();
   }
 }
-GIGI.Index = {
+MLPRO.Header = {
+  init: function () {
+    this.megaMenu();
+    this.mobileToggle();
+  },
+  megaMenu: function () {
+    var $header = $('.site-header');
+    var $dropdownItem = $header.find('.site-header__item--dropdown');
+    var $mega = $header.find('.site-header__mega');
+    var closeTimer;
+
+    if (!$dropdownItem.length || !$mega.length) {
+      return;
+    }
+
+    function openMega(megaId) {
+      clearTimeout(closeTimer);
+      $header.addClass('is-mega-open');
+      $dropdownItem.removeClass('is-active');
+      $mega.removeClass('is-active');
+      $dropdownItem.filter('[data-mega="' + megaId + '"]').addClass('is-active');
+      $mega.filter('[data-mega="' + megaId + '"]').addClass('is-active');
+    }
+
+    function closeMega() {
+      closeTimer = setTimeout(function () {
+        $header.removeClass('is-mega-open');
+        $dropdownItem.removeClass('is-active');
+        $mega.removeClass('is-active');
+      }, 80);
+    }
+
+    $dropdownItem.on('mouseenter focusin', function () {
+      openMega($(this).data('mega'));
+    });
+
+    $mega.on('mouseenter', function () {
+      openMega($(this).data('mega'));
+    });
+
+    $header.on('mouseleave', closeMega);
+
+    $dropdownItem.on('focusout', function (e) {
+      if (!$header[0].contains(e.relatedTarget)) {
+        closeMega();
+      }
+    });
+  },
+  mobileToggle: function () {
+    var $header = $('.site-header');
+    var $toggle = $header.find('.site-header__toggle');
+    var $mobileNav = $header.find('.site-header__mobile-nav');
+
+    $toggle.on('click', function () {
+      var isOpen = $mobileNav.hasClass('is-open');
+      $mobileNav.toggleClass('is-open', !isOpen);
+      $toggle.attr('aria-expanded', !isOpen);
+      $('body').toggleClass('open-menu-mb', !isOpen);
+    });
+  }
+}
+MLPRO.Index = {
   init: function(){
     var that = this;
-    that.swiperTopbar();
-    that.swiperMainSlider();
+    that.productLoopSwiper();
+    that.homeVideoPlay();
   },
-  swiperTopbar: function(){
-    new Swiper('.topbar-swiper', {
-      loop: true,
-      autoplay: {
-        delay: 2500,
-        disableOnInteraction: false,
-      },
-      speed: 800,
-      effect: 'slide'
+  productLoopSwiper: function(){
+    $('.product-loop__swiper').each(function(){
+      var $swiperEl = $(this);
+      var slideCount = $swiperEl.find('.swiper-slide').length;
+      if(slideCount < 2){
+        $swiperEl.find('.product-loop__nav').hide();
+        return;
+      }
+      var swiper = new Swiper(this, {
+        slidesPerView: 1,
+        allowTouchMove: true,
+        speed: 400,
+        loop: true,
+        navigation: {
+          nextEl: $swiperEl.find('.product-loop__nav--next')[0],
+          prevEl: $swiperEl.find('.product-loop__nav--prev')[0]
+        }
+      });
+      $swiperEl.find('.product-loop__nav').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+      });
     });
   },
-  swiperMainSlider: function(){
-    new Swiper('.banner-swiper', {
-      loop: true,
-      autoplay: {
-        delay: 4000,
-        disableOnInteraction: false,
-      },
-      speed: 1000
+  homeVideoPlay: function(){
+    $('.home-video__play').on('click', function(){
+      var $media = $(this).closest('.home-video__media');
+      var videoId = $media.data('youtube-id');
+      if(!videoId || $media.hasClass('is-playing')){
+        return;
+      }
+      var iframe = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen title="Video"></iframe>';
+      $media.find('.home-video__iframe-wrap').html(iframe);
+      $media.addClass('is-playing');
     });
-  }
+  },
 }
-GIGI.Init = function(){
-  GIGI.Global.init();
+MLPRO.Init = function(){
+  MLPRO.Global.init();
   if(shop.template.indexOf('index') != -1){
-    GIGI.Index.init();
+    MLPRO.Index.init();
   }
 }
 $(document).ready(function(){
-	GIGI.Init();
+	MLPRO.Init();
 });

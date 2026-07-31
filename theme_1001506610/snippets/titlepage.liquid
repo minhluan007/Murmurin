@@ -16,23 +16,23 @@
 		{%- if template contains 'page' -%}
 			{%- assign getTitlePageEN = page.metafields.hrvmultilang_en.title | append: '' -%}
 			{%- if getTitlePageEN != '' -%}
-				{%- assign getPageTitle = getTitlePageEN | append: ' - GIGI Vietnam' -%}
+				{%- assign getPageTitle = getTitlePageEN | append: ' - MAMMA GELATO' -%}
 			{%- endif -%}
 		{%- endif -%}
 	
 		{%- if template contains 'collection' -%}
 			{%- assign getTitlePageEN = collection.metafields.hrvmultilang_en.title | append: '' -%}
 			{%- if getTitlePageEN != '' -%}
-				{%- assign getPageTitle = getTitlePageEN | append: ' - GIGI Vietnam' -%}
+				{%- assign getPageTitle = getTitlePageEN | append: ' - MAMMA GELATO' -%}
 			{%- endif -%}
 		{%- endif -%}
 	
 		{%- if template contains 'product' -%}
 			{%- assign getTitlePageEN = product.metafields.hrvmultilang_en.title | append: '' -%}
 			{%- if getTitlePageEN != '' -%}
-				{%- assign getPageTitle = getTitlePageEN | append: ' - GIGI Vietnam' -%}
+				{%- assign getPageTitle = getTitlePageEN | append: ' - MAMMA GELATO' -%}
 			{%- else -%}
-				{%- assign getPageTitle = product.title | append: ' - GIGI Vietnam' -%}
+				{%- assign getPageTitle = product.title | append: ' - MAMMA GELATO' -%}
 			{%- endif -%}
 		{%- endif -%}
 	
@@ -45,39 +45,39 @@
 	{%- endif -%}
 	
 	{%- capture defaultTitle -%}
-		{{ getPageTitle }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %} - GIGI Việt Nam
+		{{ getPageTitle }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %} - MAMMA GELATO
 	{%- endcapture -%}
 
 
 	{%- if template contains 'index' -%}
 	
 		{%- if language == 'en' -%}
-			GIGI Vietnam
+			MAMMA GELATO
 		{%- else -%}
-			GIGI Việt Nam
+			MAMMA GELATO
 		{%- endif -%}
 	
 	{%- else -%}
 	
 		{%- if language == 'en' -%}
 			{%- if template contains 'cart' -%}
-				Cart - GIGI Vietnam
+				Cart - MAMMA GELATO
 			{%- elsif template contains 'search' -%}
-				Search - GIGI Vietnam
+				Search - MAMMA GELATO
 			{%- elsif template contains 'login' -%}
-				Login - GIGI Vietnam
+				Login - MAMMA GELATO
 			{%- elsif template contains 'register' -%}
-				Register - GIGI Vietnam
+				Register - MAMMA GELATO
 			{%- elsif template contains 'wishlist' -%}
-				Wishlist - GIGI Vietnam
+				Wishlist - MAMMA GELATO
 			{%- elsif template contains 'addresses' -%}
-				Addresses - GIGI Vietnam
+				Addresses - MAMMA GELATO
 			{%- elsif template contains 'orders' -%}
-				Orders - GIGI Vietnam
+				Orders - MAMMA GELATO
 			{%- elsif template contains 'order' -%}
-				Detail Order - GIGI Vietnam
+				Detail Order - MAMMA GELATO
 			{%- elsif template contains 'account' -%}
-				Account - GIGI Vietnam
+				Account - MAMMA GELATO
 			{%- else -%}
 				{{defaultTitle}}
 			{%- endif -%}
