@@ -1,1 +1,220 @@
-/* */
+<header class="site-header{% if template == 'index' %} site-header--overlay{% endif %}">
+  {%- assign main_menu = linklists['main-menu-2026'] -%}
+
+  <div class="site-header__backdrop" aria-hidden="true"></div>
+
+  <div class="site-header__wrap">
+    <div class="site-header__bar container-fluid">
+      <div class="site-header__logo">
+        <a href="/" title="{{ shop.name }}">
+          {%- if settings.use_logo and settings.logo != blank -%}
+            <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}">
+          {%- else -%}
+            <img src="https://cdn.hstatic.net/files/1000173990/file/savor-2.png" alt="{{ shop.name }}">
+          {%- endif -%}
+        </a>
+      </div>
+
+      <nav class="site-header__nav" aria-label="Main navigation">
+        <ul class="site-header__menu">
+          {%- if main_menu.links.size > 0 -%}
+            {%- for link in main_menu.links -%}
+              {%- assign child_menu = linklists[link.handle] -%}
+              {%- if child_menu.links.size > 0 -%}
+                <li class="site-header__item site-header__item--dropdown" data-mega="{{ link.handle }}">
+                  <a
+                    href="{{ link.url }}"
+                    title="{{ link.title }}"
+                    {% if link.active %}
+                      class="is-active"
+                    {% endif %}
+                  >
+                    {{- link.title | upcase -}}
+                  </a>
+                </li>
+              {%- else -%}
+                <li class="site-header__item">
+                  <a
+                    href="{{ link.url }}"
+                    title="{{ link.title }}"
+                    {% if link.active %}
+                      class="is-active"
+                    {% endif %}
+                  >
+                    {{- link.title | upcase -}}
+                  </a>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            <li class="site-header__item site-header__item--dropdown" data-mega="shop">
+              <a href="/collections/all" title="Shop">SHOP</a>
+            </li>
+            <li class="site-header__item">
+              <a href="/pages/about" title="About">ABOUT</a>
+            </li>
+            <li class="site-header__item">
+              <a href="/blogs/news" title="Recipes">RECIPES</a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <a href="/search" class="site-header__action" title="Search" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </a>
+        <a
+          href="{% if customer %}/account{% else %}/account/login{% endif %}"
+          class="site-header__action"
+          title="Account"
+          aria-label="Account"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M5 20C5 16.134 8.134 13 12 13C15.866 13 19 16.134 19 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </a>
+        <a href="/cart" class="site-header__action site-header__action--cart" title="Cart" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6H21L19 14H8L6 6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M6 6L5 3H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="9.5" cy="18.5" r="1.5" fill="currentColor"/>
+            <circle cx="17.5" cy="18.5" r="1.5" fill="currentColor"/>
+          </svg>
+          <span
+            class="site-header__cart-count"
+            {% if cart.item_count == 0 %}
+              style="display:none"
+            {% endif %}
+          >
+            {{- cart.item_count -}}
+          </span>
+        </a>
+
+        <button type="button" class="site-header__toggle" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="site-header__mega-wrap">
+      {%- if main_menu.links.size > 0 -%}
+        {%- for link in main_menu.links -%}
+          {%- assign child_menu = linklists[link.handle] -%}
+          {%- if child_menu.links.size > 0 -%}
+            <div class="site-header__mega" data-mega="{{ link.handle }}">
+              <div class="site-header__mega-inner container-fluid">
+                <div class="site-header__mega-links">
+                  <ul>
+                    {%- for child in child_menu.links -%}
+                      <li>
+                        <a href="{{ child.url }}" title="{{ child.title }}">{{ child.title | upcase }}</a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+
+                <div class="site-header__mega-cards">
+                  <a class="site-header__mega-card" href="/collections/all" title="All Products">
+                    <img
+                      src="https://cdn.hstatic.net/files/1000173990/file/placeholder_283_bachanfam_9869_4a3bb2a5-7d08-4620-aac3-64cea8cdb0bb.jpg"
+                      alt="All Products"
+                      loading="lazy"
+                    >
+                    <span>ALL PRODUCTS</span>
+                  </a>
+                  <a class="site-header__mega-card" href="/collections/barbecue" title="Barbecue Sauces">
+                    <img
+                      src="https://cdn.hstatic.net/files/1000173990/file/placeholder_283_bachanfam_9869_4a3bb2a5-7d08-4620-aac3-64cea8cdb0bb.jpg"
+                      alt="Barbecue Sauces"
+                      loading="lazy"
+                    >
+                    <span>BARBECUE SAUCES</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <div class="site-header__mega" data-mega="shop">
+          <div class="site-header__mega-inner container-fluid">
+            <div class="site-header__mega-links">
+              <ul>
+                <li><a href="/collections/barbecue" title="Barbecue">BARBECUE</a></li>
+                <li><a href="/collections/dipping" title="Dipping">DIPPING</a></li>
+                <li><a href="/collections/gifts" title="Gifts">GIFTS</a></li>
+                <li><a href="/collections/merch" title="Merch">MERCH</a></li>
+              </ul>
+            </div>
+
+            <div class="site-header__mega-cards">
+              <a class="site-header__mega-card" href="/collections/all" title="All Products">
+                <img
+                  src="https://cdn.hstatic.net/files/1000173990/file/placeholder_283_bachanfam_9869_4a3bb2a5-7d08-4620-aac3-64cea8cdb0bb.jpg"
+                  alt="All Products"
+                  loading="lazy"
+                >
+                <span>ALL PRODUCTS</span>
+              </a>
+              <a class="site-header__mega-card" href="/collections/barbecue" title="Barbecue Sauces">
+                <img
+                  src="https://cdn.hstatic.net/files/1000173990/file/placeholder_283_bachanfam_9869_4a3bb2a5-7d08-4620-aac3-64cea8cdb0bb.jpg"
+                  alt="Barbecue Sauces"
+                  loading="lazy"
+                >
+                <span>BARBECUE SAUCES</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="site-header__mobile-nav">
+    <nav aria-label="Mobile navigation" class="container-fluid">
+      <ul>
+        {%- if main_menu.links.size > 0 -%}
+          {%- for link in main_menu.links -%}
+            {%- assign child_menu = linklists[link.handle] -%}
+            <li
+              {% if child_menu.links.size > 0 %}
+                class="site-header__mobile-item site-header__mobile-item--has-sub"
+              {% endif %}
+            >
+              <a href="{{ link.url }}" title="{{ link.title }}">{{ link.title | upcase }}</a>
+              {%- if child_menu.links.size > 0 -%}
+                <ul class="site-header__mobile-sub">
+                  {%- for child in child_menu.links -%}
+                    <li>
+                      <a href="{{ child.url }}" title="{{ child.title }}">{{ child.title | upcase }}</a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          <li class="site-header__mobile-item site-header__mobile-item--has-sub">
+            <a href="/collections/all" title="Shop">SHOP</a>
+            <ul class="site-header__mobile-sub">
+              <li><a href="/collections/barbecue" title="Barbecue">BARBECUE</a></li>
+              <li><a href="/collections/dipping" title="Dipping">DIPPING</a></li>
+              <li><a href="/collections/gifts" title="Gifts">GIFTS</a></li>
+              <li><a href="/collections/merch" title="Merch">MERCH</a></li>
+            </ul>
+          </li>
+          <li><a href="/pages/about" title="About">ABOUT</a></li>
+          <li><a href="/blogs/news" title="Recipes">RECIPES</a></li>
+        {%- endif -%}
+      </ul>
+    </nav>
+  </div>
+</header>
