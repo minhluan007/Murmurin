@@ -1,0 +1,50 @@
+{
+	// Áp dụng cho tất cả (JS, TS, JSON)
+	"editor.formatOnSave": true,
+	"editor.formatOnType": true,
+	"editor.tabSize": 4,
+	"editor.insertSpaces": true,
+
+	// --- JavaScript ---
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// --- TypeScript ---
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// --- JSON ---
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// --- Liquid ---
+	"[liquid]": {
+		"editor.defaultFormatter": "Shopify.theme-check-vscode",
+		// "editor.wordWrap": "off",
+		// "editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	"[scss]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// "files.associations": {
+	// 	"*.liquid": "html",
+	// 	"*.scss.liquid": "scss",
+	// 	"*.css.liquid": "css",
+	// 	"*.js.liquid": "javascript"
+	// },
+
+	"prettier.singleQuote": true,
+	"prettier.trailingComma": "all",
+	"prettier.useTabs": false,
+	"prettier.printWidth": 580,
+	"prettier.useEditorConfig": false
+}
