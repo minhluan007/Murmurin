@@ -1,0 +1,16 @@
+{%- if settings.display_messenger_facebook -%}
+  <a
+    href="{{ settings.messenger_facebook_link }}"
+    class="messenger-fb"
+    title="{{ settings.messenger_facebook_title }}"
+    aria-label="Chat Facebook Messenger"
+  >
+    <img
+      class="lazyload"
+      data-src="{{ settings.messenger_facebook_image | image_url: width: 60 }}"
+      alt="{{ settings.messenger_facebook_title }}"
+      width="60"
+      height="60"
+    >
+  </a>
+{%- endif -%}

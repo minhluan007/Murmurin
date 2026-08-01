@@ -1,70 +1,491 @@
-<style>
-	input[type=checkbox] {zoom: 1.5;}
-	td:first-child,td>label,th>label{font-weight: bold!important;}
-	td>p,th>p{font-weight: 100!important;}
-	#content .section .col-md-3 { display: none }
-	#content .col-md-9 { width: 100% }
-	.setnd { border: 1px solid #eee; padding: 20px 0px}
-	#tabs li {float: left;padding: 5px 20px;background: #eee;margin: 0px 5px;}
-	.activeta { background: #272727  !important }
-	.lala { border: 1px solid #272727  !important }
-	#tabs-1 { display: block }
-	#tabs { float: left }
-	h2.heading.active {color: rgb(0, 0, 0);background:#F5FBFF;}
-	.open h2.heading {color: #fff  !important ;background: #58B3F0  !important ;}
-	.hd {font-size: 18px;line-height: 1.3;margin: 0px;padding: 10px;}
-	th>p ,td>p {font-weight: 100!important;margin: 0px;line-height: 15px;white-space: initial;}
-	.theme-settings-form input[type=text], .theme-settings-form textarea {width: 100%;}
-	#content {margin-left: 200px;white-space: normal;}
-	.theme-settings-form td.menu {max-width: 260px;}
-	.theme-settings-form td.sf-w{ width:170px!important; }
-</style>
-<p class="hd">Để chỉnh sửa các mục khác nhau, bạn có thể click vào tên từng mục để mở phần cần sửa. Sau khi chỉnh sửa, bạn nhấn nút Lưu ở góc phải màn hình để hoàn tất.
-</p>
-<fieldset class="test">
-	<legend> 1. Trang chủ</legend>
-	<div id="tabs-1" class="setnd col-sm-12">
-		<div class="col-sm-6"><img src="//hstatic.net/407/1000061407/1000087507/layout_base.png?v=6" width="94%"style="float: right;"></div>
-		<div class="col-sm-6">
-			<!-- Đầu trang -->
-			<fieldset>
-				<legend>1. Logo và Favicon</legend>
-				<table>
-					<tr>
-						<th>
-							<label for="use_logo">Chọn logo của website</label>
-							<p>(Kích thước hiển thị tối đa là 300x83 pixel, tự động điều chỉnh nếu file của bạn lớn hơn kích thước này.)</p>
-						</th>
-						<td><input type="checkbox" id="use_logo" name="use_logo" value="1" /></td>
-					</tr>
-					<tr>
-						<td>
-							<input type="file" id="logo" name="logo.png" data-max-width="300" data-max-height="83" />
-						</td>
-					</tr>
-					<tr>
-						<td><label for="logo">Chọn favicon</label><p>Biểu tượng website của bạn trên trình duyệt, kích thước chuẩn: 16x16 pixel</p></td>
-						<td>
-							<input type="file" id="logo" name="favicon.png" data-max-width="16" data-max-height="16" />
-						</td>
-					</tr>
-				</table>
-			</fieldset>
-
-		</div>
-	</div>
-
-</fieldset>
-<fieldset class="test">
-	<legend>Hình ảnh chia sẻ trang chủ lên facebook</legend>
-	<div class="col-sm-12">
-		<div class="col-sm-12">
+<fieldset>
+	<legend>. Thiết lập chung</legend>
+	<div id="tabs-general-0" class="col-sm-12">
+		<fieldset>
+			<legend>. Messenger Facebook</legend>
 			<table>
 				<tr>
-					<td><label>Hình ảnh chia sẻ trang chủ</label></td>
-					<td><input type="file" name="share_fb_home.png" /></td>
+					<th><label>Ẩn/hiện Messenger Facebook</label></th>
+					<td><input type="checkbox" name="display_messenger_facebook" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Link Messenger Facebook</label></th>
+					<td><input type="text" name="messenger_facebook_link" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Hình ảnh Messenger Facebook</label></th>
+					<td><input type="text" name="messenger_facebook_image" value="" /></td>
 				</tr>
 			</table>
-		</div>
+		</fieldset>
+	</div>
+</fieldset>
+
+<fieldset>
+	<legend>. Header</legend>
+	<div id="tabs-0" class="col-sm-12">
+		<fieldset>
+			<legend>. Logo & Favicon</legend>
+			<table>
+				<tr>
+					<th><label>Logo</label></th>
+					<td><input type="file" name="logo.png" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Favicon</label></th>
+					<td><input type="file" name="favicon.png" value="" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Topbar</legend>
+			<table>
+				<tr>
+					<th><label>Ẩn/hiện Topbar</label></th>
+					<td><input type="checkbox" name="display_topbar" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Màu nền Topbar</label></th>
+					<td><input class="color" name="background_topbar" value="#000" /></td>
+				</tr>
+				<tr>
+					<th><label>Màu chữ Topbar</label></th>
+					<td><input class="color" name="color_topbar" value="#fff" /></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<h3>Item 1</h3>
+					</td>
+				</tr>
+				<tr>
+					<th><label>Ẩn/hiện Item 1</label></th>
+					<td><input type="checkbox" name="use_item_topbar_1" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Tiêu đề Item 1</label></th>
+					<td><input type="text" name="title_item_topbar_1" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Liên kết Item 1</label></th>
+					<td><input type="text" name="link_item_topbar_1" value="" /></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<h3>Item 2</h3>
+					</td>
+				</tr>
+				<tr>
+					<th><label>Ẩn/hiện Item 2</label></th>
+					<td><input type="checkbox" name="use_item_topbar_2" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Tiêu đề Item 2</label></th>
+					<td><input type="text" name="title_item_topbar_2" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Liên kết Item 2</label></th>
+					<td><input type="text" name="link_item_topbar_2" value="" /></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<h3>Item 3</h3>
+					</td>
+				</tr>
+				<tr>
+					<th><label>Ẩn/hiện Item 3</label></th>
+					<td><input type="checkbox" name="use_item_topbar_3" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Tiêu đề Item 3</label></th>
+					<td><input type="text" name="title_item_topbar_3" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Liên kết Item 3</label></th>
+					<td><input type="text" name="link_item_topbar_3" value="" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Menu</legend>
+			<table>
+				<tr>
+					<th><label>Menu chính</label></th>
+					<td><select class="linklist" name="main_menu"></select></td>
+				</tr>
+			</table>
+			<div class="col-sm-12">
+				<fieldset>
+					<legend>. Banner Cards Vị trí menu 1</legend>
+					<table>
+						<tr>
+							<th><label>Ẩn/hiện Banner Cards</label></th>
+							<td><input type="checkbox" name="use_banner_cards_1" value="1" /></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<h3>Banner Card 1</h3>
+							</td>
+						</tr>
+						<tr>
+							<th><label>Ẩn/hiện Banner Card 1</label></th>
+							<td><input type="checkbox" name="use_banner_card_1_1" value="1" /></td>
+						</tr>
+						<tr>
+							<th><label>Tiêu đề Banner Card 1</label></th>
+							<td><input type="text" name="title_banner_card_1_1" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Liên kết Banner Card 1</label></th>
+							<td><input type="text" name="link_banner_card_1_1" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Hình ảnh Banner Card 1</label></th>
+							<td><input type="text" name="image_banner_card_1_1" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Alt Banner Card 1</label></th>
+							<td><input type="text" name="alt_banner_card_1_1" value="" /></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<h3>Banner Card 2</h3>
+							</td>
+						</tr>
+						<tr>
+							<th><label>Ẩn/hiện Banner Card 2</label></th>
+							<td><input type="checkbox" name="use_banner_card_2_1" value="1" /></td>
+						</tr>
+						<tr>
+							<th><label>Tiêu đề Banner Card 2</label></th>
+							<td><input type="text" name="title_banner_card_2_1" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Liên kết Banner Card 2</label></th>
+							<td><input type="text" name="link_banner_card_2_1" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Hình ảnh Banner Card 2</label></th>
+							<td><input type="text" name="image_banner_card_2_1" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Alt Banner Card 2</label></th>
+							<td><input type="text" name="alt_banner_card_2_1" value="" /></td>
+						</tr>
+					</table>
+				</fieldset>
+				<fieldset>
+					<legend>. Banner Cards Vị trí menu 2</legend>
+					<table>
+						<tr>
+							<th><label>Ẩn/hiện Banner Cards</label></th>
+							<td><input type="checkbox" name="use_banner_cards_2" value="1" /></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<h3>Banner Card 1</h3>
+							</td>
+						</tr>
+						<tr>
+							<th><label>Ẩn/hiện Banner Card 1</label></th>
+							<td><input type="checkbox" name="use_banner_card_1_2" value="1" /></td>
+						</tr>
+						<tr>
+							<th><label>Tiêu đề Banner Card 1</label></th>
+							<td><input type="text" name="title_banner_card_1_2" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Liên kết Banner Card 1</label></th>
+							<td><input type="text" name="link_banner_card_1_2" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Hình ảnh Banner Card 1</label></th>
+							<td><input type="text" name="image_banner_card_1_2" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Alt Banner Card 1</label></th>
+							<td><input type="text" name="alt_banner_card_1_2" value="" /></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<h3>Banner Card 2</h3>
+							</td>
+						</tr>
+						<tr>
+							<th><label>Ẩn/hiện Banner Card 2</label></th>
+							<td><input type="checkbox" name="use_banner_card_2_2" value="1" /></td>
+						</tr>
+						<tr>
+							<th><label>Tiêu đề Banner Card 2</label></th>
+							<td><input type="text" name="title_banner_card_2_2" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Liên kết Banner Card 2</label></th>
+							<td><input type="text" name="link_banner_card_2_2" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Hình ảnh Banner Card 2</label></th>
+							<td><input type="text" name="image_banner_card_2_2" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Alt Banner Card 2</label></th>
+							<td><input type="text" name="alt_banner_card_2_2" value="" /></td>
+						</tr>
+					</table>
+				</fieldset>
+				<fieldset>
+					<legend>. Banner Cards Vị trí menu 3</legend>
+					<table>
+						<tr>
+							<th><label>Ẩn/hiện Banner Cards</label></th>
+							<td><input type="checkbox" name="use_banner_cards_3" value="1" /></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<h3>Banner Card 1</h3>
+							</td>
+						</tr>
+						<tr>
+							<th><label>Ẩn/hiện Banner Card 1</label></th>
+							<td><input type="checkbox" name="use_banner_card_1_3" value="1" /></td>
+						</tr>
+						<tr>
+							<th><label>Tiêu đề Banner Card 1</label></th>
+							<td><input type="text" name="title_banner_card_1_3" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Liên kết Banner Card 1</label></th>
+							<td><input type="text" name="link_banner_card_1_3" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Hình ảnh Banner Card 1</label></th>
+							<td><input type="text" name="image_banner_card_1_3" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Alt Banner Card 1</label></th>
+							<td><input type="text" name="alt_banner_card_1_3" value="" /></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<h3>Banner Card 2</h3>
+							</td>
+						</tr>
+						<tr>
+							<th><label>Ẩn/hiện Banner Card 2</label></th>
+							<td><input type="checkbox" name="use_banner_card_2_3" value="1" /></td>
+						</tr>
+						<tr>
+							<th><label>Tiêu đề Banner Card 2</label></th>
+							<td><input type="text" name="title_banner_card_2_3" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Liên kết Banner Card 2</label></th>
+							<td><input type="text" name="link_banner_card_2_3" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Hình ảnh Banner Card 2</label></th>
+							<td><input type="text" name="image_banner_card_2_3" value="" /></td>
+						</tr>
+						<tr>
+							<th><label>Alt Banner Card 2</label></th>
+							<td><input type="text" name="alt_banner_card_2_3" value="" /></td>
+						</tr>
+					</table>
+				</fieldset>
+			</div>
+		</fieldset>
+	</div>
+</fieldset>
+
+<fieldset>
+	<legend>. Homepage</legend>
+	<div id="tabs-1" class="col-sm-12">
+		<fieldset>
+			<legend>. Hero</legend>
+			<table>
+				<tr>
+					<th colspan="2">
+						<p>
+							Width desktop đề xuất: 1920px, Height desktop đề xuất: 1080px
+							<br>
+							Width mobile đề xuất: 1080px, Height mobile đề xuất: 1920px
+						</p>
+					</th>
+				</tr>
+				<tr>
+					<th><label>Ẩn/hiện Hero</label></th>
+					<td><input type="checkbox" name="display_homepage_hero" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Width Banner Desktop (chỉ nhập số)</label></th>
+					<td><input type="text" name="width_homepage_hero_desktop" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Height Banner Mobile (chỉ nhập số)</label></th>
+					<td><input type="text" name="height_homepage_hero_desktop" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Width Banner Mobile (chỉ nhập số)</label></th>
+					<td><input type="text" name="width_homepage_hero_mobile" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Height Banner Mobile (chỉ nhập số)</label></th>
+					<td><input type="text" name="height_homepage_hero_mobile" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Hình ảnh Hero Desktop</label></th>
+					<td><input type="text" name="image_homepage_hero_desktop" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Hình ảnh Hero Mobile</label></th>
+					<td><input type="text" name="image_homepage_hero_mobile" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Tiêu đề Hero Desktop</label></th>
+					<td><input type="text" name="title_homepage_hero" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Button</label></th>
+					<td><input type="text" name="button_text_homepage_hero" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Link Button</label></th>
+					<td><input type="text" name="link_button_homepage_hero" value="" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Home Products</legend>
+			<table>
+				<tr>
+					<th><label>Ẩn/hiện Home Products</label></th>
+					<td><input type="checkbox" name="display_homepage_products" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Collection</label></th>
+					<td><select class="collection" name="collection_homepage_products"></select></td>
+				</tr>
+				<tr>
+					<th><label>Số lượng hiển thị (tối đa 50)</label></th>
+					<td><input type="text" name="limit_homepage_products" value="" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Home Video</legend>
+			<table>
+				<tr>
+					<th colspan="2">
+						<p>
+							Width desktop đề xuất: 1920px, Height desktop đề xuất: 1080px
+							<br>
+							Width mobile đề xuất: 1080px, Height mobile đề xuất: 1920px
+						</p>
+					</th>
+				</tr>
+				<tr>
+					<th><label>Ẩn/hiện Home Video</label></th>
+					<td><input type="checkbox" name="display_homepage_video" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Width Banner Desktop (chỉ nhập số)</label></th>
+					<td><input type="text" name="width_homepage_video_desktop" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Height Banner Desktop (chỉ nhập số)</label></th>
+					<td><input type="text" name="height_homepage_video_desktop" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Width Banner Mobile (chỉ nhập số)</label></th>
+					<td><input type="text" name="width_homepage_video_mobile" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Height Banner Mobile (chỉ nhập số)</label></th>
+					<td><input type="text" name="height_homepage_video_mobile" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Youtube ID</label></th>
+					<td><input type="text" name="youtube_id_homepage_video" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Hình ảnh Poster Desktop</label></th>
+					<td><input type="text" name="image_homepage_video_poster" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Hình ảnh Poster Mobile</label></th>
+					<td><input type="text" name="image_homepage_video_poster_mobile" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Alt Poster</label></th>
+					<td><input type="text" name="alt_homepage_video_poster" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Tiêu đề</label></th>
+					<td><input type="text" name="title_homepage_video" value="" /></td>
+				</tr>
+				<tr>
+					<th><label>Mô tả</label></th>
+					<td><textarea name="description_homepage_video" value=""></textarea></td>
+				</tr>
+			</table>
+		</fieldset>
+	</div>
+</fieldset>
+
+
+<fieldset>
+	<legend>. Footer</legend>
+	<div id="tabs-2" class="col-sm-12">
+		<fieldset>
+			<legend>. Footer Columns 1</legend>
+			<table>
+				<tr>
+					<th><label>Tiêu đề</label></th>
+					<td><input type="text" name="title_col_footer_1" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Liên kết</label></th>
+					<td><select class="linklist" name="links_col_footer_1"></select></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Footer Columns 2</legend>
+			<table>
+				<tr>
+					<th><label>Tiêu đề</label></th>
+					<td><input type="text" name="title_col_footer_2" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Liên kết</label></th>
+					<td><select class="linklist" name="links_col_footer_2"></select></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Footer Columns 3</legend>
+			<table>
+				<tr>
+					<th><label>Tiêu đề</label></th>
+					<td><input type="text" name="title_col_footer_3" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Liên kết</label></th>
+					<td><select class="linklist" name="links_col_footer_3"></select></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset>
+			<legend>. Footer Newsletter</legend>
+			<table>
+				<tr>
+					<th><label>Ẩn/hiện Footer Newsletter</label></th>
+					<td><input type="checkbox" name="display_footer_newsletter" value="1" /></td>
+				</tr>
+				<tr>
+					<th><label>Tiêu đề</label></th>
+					<td><input type="text" name="title_footer_newsletter" value="1" /></td>
+				</tr>
+			</table>
+		</fieldset>
 	</div>
 </fieldset>

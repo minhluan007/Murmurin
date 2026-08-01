@@ -1,49 +1,71 @@
-<nav id="mp-menu" class="mp-menu">
-	<div class="mp-level">
-		<ul class="lv1">
-			{% for link1 in linklists.main-menu.links %}
-			{% if linklists[link1.handle].links == empty %}
-			<li><a href="{{ link1.url }}">{{ link1.title }}</a></li>
-			{% else %}
-			<li class="has-children icon icon-arrow-left">
-				<a href="{{ link1.url }}">{{ link1.title }}</a>
-				{%capture count_link %}{{ linklists[link1.handle].links.size }}{%endcapture%}
-				<div class="mp-level">
-					<h2 >{{ link1.title }}</h2>
-					<a class="mp-back" href="#">Quay lại</a>
-					<ul class="cd-secondary-nav count-nav-{{count_link }}">
-						{% for link2 in linklists[link1.handle].links %}
-						{% if linklists[link2.handle].links == empty %}
-						<li><a href="{{ link2.url }}">{{ link2.title }}</a></li>
-						{% else %}
-						<li class="has-children icon icon-arrow-left">
-							<a href="{{ link2.url }}">{{ link2.title }}</a>
-							<div class="mp-level">
-								<h2 >{{ link2.title }}</h2>
-								<a class="mp-back" href="#">Quay lại</a>
-								<ul >
-									{% for link3 in linklists[link2.handle].links %}						
-									<li><a href="{{ link3.url }}">{{ link3.title }}</a></li>				
-									{% endfor %}
-								</ul>
-							</div>
-						</li>
-						{% endif %}
-						{% endfor %}
-					</ul>
-				</div>
-			</li>
-			{% endif %}
-			{% endfor %}
-		</ul>
-	</div>
-</nav>
+{%- assign main_menu = linklists[settings.main_menu] -%}
 
-<script>
-new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ), {
-	type : 'cover'
-} );
-</script>
-{% comment %}
-include các file :modernizr.custom.js,classie.js,mlpushmenu.js
-{% endcomment %}
+<div class="menu-mobile" aria-hidden="true">
+  <div class="menu-mobile__overlay"></div>
+
+  <div class="menu-mobile__drawer">
+    <button type="button" class="menu-mobile__close" aria-label="Close menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <nav class="menu-mobile__nav" aria-label="Mobile navigation">
+      <ul class="menu-mobile__list">
+        {%- if main_menu.links.size > 0 -%}
+          {%- for link in main_menu.links -%}
+            {%- assign child_menu = linklists[link.handle] -%}
+            <li
+              class="
+                menu-mobile__item
+                {%- if child_menu.links.size > 0 %} menu-mobile__item--has-sub{% endif -%}
+              "
+            >
+              <a
+                href="{{ link.url }}"
+                title="{{ link.title }}"
+                {% if link.active %}
+                  class="is-active"
+                {% endif %}
+              >
+                {{- link.title | upcase -}}
+              </a>
+              {%- if child_menu.links.size > 0 -%}
+                <ul class="menu-mobile__sub">
+                  {%- for child in child_menu.links -%}
+                    <li>
+                      <a
+                        href="{{ child.url }}"
+                        title="{{ child.title }}"
+                        {% if child.active %}
+                          class="is-active"
+                        {% endif %}
+                      >
+                        {{- child.title | upcase -}}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </nav>
+
+    {%- if settings.use_banner_card_1_1 and settings.image_banner_card_1_1 != blank -%}
+      <a
+        class="menu-mobile__promo"
+        href="{{ settings.link_banner_card_1_1 | default: '/collections/all' }}"
+        title="{{ settings.title_banner_card_1_1 | default: 'All products' }}"
+      >
+        <img
+          src="{{ settings.image_banner_card_1_1 }}"
+          alt="{{ settings.alt_banner_card_1_1 | default: settings.title_banner_card_1_1 }}"
+          loading="lazy"
+        >
+        <span>{{ settings.title_banner_card_1_1 | default: 'ALL PRODUCTS' | upcase }}</span>
+      </a>
+    {%- endif -%}
+  </div>
+</div>

@@ -37,6 +37,6 @@
 	"prettier.singleQuote": true,
 	"prettier.trailingComma": "all",
 	"prettier.useTabs": false,
-	"prettier.printWidth": 580,
+	"prettier.printWidth": 1080,
 	"prettier.useEditorConfig": false
 }
