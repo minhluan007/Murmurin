@@ -62,6 +62,7 @@
   	id: '{{ shop.id }}',
   	template: "{{ template }}",
   	moneyFormat: "{{ shop.money_format }}",
+    name: "{{ shop.name }}",
   	account: {
   		id: '{{ customer.id }}',
   		email: '{{ customer.email }}',
@@ -80,3 +81,11 @@
     --font-body: 'Inter', sans-serif;
   }
 </style>
+<script>
+  window.lang = {
+    t1: 'Không có sản phẩm nào',
+    t2: 'Đăng ký nhận thông tin thành công',
+    t3: 'Đăng ký nhận thông tin thất bại',
+    t4: 'Thông báo',
+  };
+</script>
