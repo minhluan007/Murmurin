@@ -1,4 +1,7 @@
 var MLPRO = {}
+window.accountJS = {};
+window.cartJS = {};
+window.checkoutsJS = {};
 MLPRO.Module = {
   findTokenVerification: function($form){
     var token = $form.find('input[name="__RequestVerificationToken"]').val();
@@ -89,21 +92,23 @@ MLPRO.Module = {
 		return emailReg.test( $email );
 	},
   getCartSidebar: function(callback){
-    $.get('/cart.js', function(data){
-      cartJS = data;
-      LEE.Module.cartJSItemInAdmin(function(){
-        //LEE.SidebarCart.renderItem();
-        $('body').addClass('open-sidebar-cart');
-        if(typeof callback === "function"){
-  				return callback();
-  			}
+    if (MLPRO.MiniCart && typeof MLPRO.MiniCart.refresh === 'function') {
+      MLPRO.MiniCart.refresh(function () {
+        MLPRO.MiniCart.open();
+        if (typeof callback === 'function') {
+          return callback();
+        }
       });
-    });
+      return;
+    }
+    if (typeof callback === 'function') {
+      return callback();
+    }
   },
   getCart: function(callback){
     $.get('/cart.js', function(data){
       cartJS = data;
-      LEE.Module.cartJSItemInAdmin(function(){
+      MLPRO.Module.cartJSItemInAdmin(function(){
         if(typeof callback === "function"){
   				return callback();
   			}
@@ -137,7 +142,11 @@ MLPRO.Module = {
 		}).catch(error => {
 
 		});
-	},
+  },
+  validateEmail: function ($email) {
+    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    return emailReg.test($email);
+  },
 }
 MLPRO.LoopItem = {
   init: function () {
@@ -450,7 +459,21 @@ MLPRO.Global = {
   init: function(){
     MLPRO.Header.init();
     MLPRO.ContactCustomer.init();
-  }
+    MLPRO.MiniSearch.init();
+    // MLPRO.FormCustomerMSO.init();
+    MLPRO.MiniCart.init();
+    MLPRO.Global.getAPI();
+  },
+  getAPI: function () {
+    $.when($.getJSON('/cart.js'), $.getJSON('/account.js'))
+      .done(function (cartData, accountData) {
+        cartJS = cartData[0];
+        accountJS = accountData[0];
+      })
+      .fail(function (error1, error2) {
+        console.error('Lỗi khi gọi API', error1, error2);
+      });
+  },
 }
 MLPRO.Header = {
   init: function () {
@@ -781,6 +804,1572 @@ MLPRO.ContactCustomer = {
             });
           });
         });
+      }
+    });
+  }
+}
+MLPRO.MiniSearch = {
+  allCollections: [],
+  collectionThumbs: {},
+  swipers: {},
+  typingTimer: null,
+  doneTypingInterval: 250,
+  currentKeyword: '',
+  isOpen: false,
+  init: function () {
+    var self = this;
+    if (!$('#mini-search').length) {
+      return;
+    }
+    self.bindOpen();
+    self.bindForm();
+    self.bindClear();
+  },
+  labels: function () {
+    var $el = $('#mini-search');
+    return {
+      products: $el.data('label-products') || 'Products',
+      collections: $el.data('label-collections') || 'Collections',
+      blogs: $el.data('label-blogs') || 'Blog',
+      suggest: $el.data('label-suggest') || 'Suggested collections',
+      productsCount: $el.data('label-products-count') || 'products',
+      noResult: $el.data('label-no-result') || 'No results found',
+      viewAll: $el.data('label-view-all') || 'View all',
+    };
+  },
+  bindOpen: function () {
+    var self = this;
+    $(document).on('click', '.js-open-mini-search', function (e) {
+      e.preventDefault();
+      self.open();
+    });
+  },
+  bindForm: function () {
+    var self = this;
+    var $input = $('#mini-search .mini-search__input');
+
+    $('#mini-search .mini-search__form').on('submit', function (e) {
+      e.preventDefault();
+      var key = $.trim($input.val());
+      if (key) {
+        location.href = '/search?q=' + encodeURIComponent(key);
+      }
+    });
+
+    $input.on('keyup', function () {
+      clearTimeout(self.typingTimer);
+      self.toggleClear();
+      self.typingTimer = setTimeout(function () {
+        self.onSearch();
+      }, self.doneTypingInterval);
+    });
+
+    $input.on('keydown', function () {
+      clearTimeout(self.typingTimer);
+    });
+  },
+  bindClear: function () {
+    var self = this;
+    $('#mini-search .mini-search__clear').on('click', function () {
+      var $input = $('#mini-search .mini-search__input');
+      $input.val('');
+      self.toggleClear();
+      self.currentKeyword = '';
+      self.showSuggest();
+      $input.focus();
+    });
+  },
+  toggleClear: function () {
+    var hasValue = $.trim($('#mini-search .mini-search__input').val()) !== '';
+    $('#mini-search .mini-search__clear').prop('hidden', !hasValue);
+  },
+  open: function () {
+    var self = this;
+    var $modal = $('#mini-search');
+
+    if (!$modal.length || typeof $.fancybox === 'undefined') {
+      return;
+    }
+
+    if (self.isOpen) {
+      return;
+    }
+
+    $.fancybox.open({
+      src: $modal[0],
+      type: 'inline',
+      touch: false,
+      smallBtn: false,
+      toolbar: false,
+      animationEffect: 'fade',
+      transitionEffect: 'fade',
+      baseClass: 'fancybox-mini-search-wrap',
+      beforeShow: function () {
+        self.isOpen = true;
+        $modal.attr('aria-hidden', 'false');
+      },
+      afterShow: function () {
+        var $input = $modal.find('.mini-search__input');
+        $input.focus();
+        self.toggleClear();
+        if ($.trim($input.val()) === '') {
+          self.showSuggest();
+        } else {
+          self.onSearch();
+        }
+      },
+      afterClose: function () {
+        self.isOpen = false;
+        $modal.attr('aria-hidden', 'true');
+        self.destroySwipers();
+      },
+    });
+  },
+  close: function () {
+    if (typeof $.fancybox !== 'undefined') {
+      $.fancybox.close();
+    }
+  },
+  addLoading: function () {
+    $('#mini-search').addClass('is-loading');
+  },
+  removeLoading: function () {
+    $('#mini-search').removeClass('is-loading');
+  },
+  onSearch: function () {
+    var self = this;
+    var keyword = $.trim($('#mini-search .mini-search__input').val());
+    self.currentKeyword = keyword;
+
+    if (!keyword) {
+      self.showSuggest();
+      return;
+    }
+
+    self.addLoading();
+    self.query(keyword);
+  },
+  searchRequest: function (post, callback) {
+    $.ajax({
+      type: 'POST',
+      url: '/search.js',
+      data: post,
+      success: function (response) {
+        if (typeof callback === 'function') {
+          callback(response);
+        }
+      },
+      error: function () {
+        if (typeof callback === 'function') {
+          callback(null);
+        }
+      },
+    });
+  },
+  showSuggest: function () {
+    var self = this;
+    var labels = self.labels();
+    var handle = $('#mini-search').data('suggest-collection') || 'fe-test';
+
+    $('#mini-search .mini-search__section--collections').addClass('is-hidden');
+    $('#mini-search .mini-search__section--blogs').addClass('is-hidden');
+    $('#mini-search .mini-search__footer').addClass('is-hidden');
+    $('#mini-search .wrap-collections').empty();
+    $('#mini-search .wrap-blogs').empty();
+
+    $('#mini-search .mini-search__section-title').first().text(labels.suggest);
+
+    self.addLoading();
+    $.ajax({
+      url: '/collections/' + handle + '/products.json?page=1&limit=4',
+      success: function (response) {
+        if (self.currentKeyword) {
+          self.removeLoading();
+          return;
+        }
+
+        if (response && response.products && response.products.length) {
+          var products = response.products.map(function (product) {
+            var item = Object.assign({}, product);
+            item.url = '/products/' + item.handle;
+            if (item.image && item.image.src) {
+              item.featured_image = item.image.src;
+            } else if (item.images && item.images.length && item.images[0].src) {
+              item.featured_image = item.images[0].src;
+            }
+            if (item.variants && item.variants.length) {
+              item.price = Number(item.variants[0].price) * 100;
+            }
+            return item;
+          });
+          $('#mini-search .wrap-product').html(self.htmlProduct({ products: products }));
+        } else {
+          $('#mini-search .wrap-product').html(
+            '<div class="mini-search__empty">' + labels.noResult + '</div>'
+          );
+        }
+        $('#mini-search .mini-search__section--products').removeClass('is-hidden');
+        self.removeLoading();
+      },
+      error: function () {
+        if (self.currentKeyword) {
+          self.removeLoading();
+          return;
+        }
+        $('#mini-search .wrap-product').html(
+          '<div class="mini-search__empty">' + labels.noResult + '</div>'
+        );
+        $('#mini-search .mini-search__section--products').removeClass('is-hidden');
+        self.removeLoading();
+      },
+    });
+  },
+  ensureCollections: function (callback) {
+    var self = this;
+    if (self.allCollections.length) {
+      if (typeof callback === 'function') {
+        callback();
+      }
+      return;
+    }
+    self.loadCollections(callback);
+  },
+  loadCollections: async function (callback) {
+    var self = this;
+    try {
+      self.allCollections = [];
+      var firstRes = await fetch('/collections?page=1');
+      var firstData = await firstRes.json();
+      if (firstData.data && Array.isArray(firstData.data)) {
+        self.allCollections = self.allCollections.concat(firstData.data);
+      }
+      var totalPages = parseInt(firstData.total_pages || firstData.total, 10) || 1;
+      if (totalPages > 1) {
+        var requests = [];
+        for (var i = 2; i <= totalPages; i++) {
+          requests.push(fetch('/collections?page=' + i).then(function (res) {
+            return res.json();
+          }));
+        }
+        var pages = await Promise.all(requests);
+        pages.forEach(function (res) {
+          if (res.data && Array.isArray(res.data)) {
+            self.allCollections = self.allCollections.concat(res.data);
+          }
+        });
+      }
+      if (typeof callback === 'function') {
+        callback();
+      }
+    } catch (err) {
+      console.error('MiniSearch loadCollections error:', err);
+      if (typeof callback === 'function') {
+        callback();
+      }
+    }
+  },
+  getCollectionThumbs: function (handle, callback) {
+    var self = this;
+    if (self.collectionThumbs[handle]) {
+      callback(self.collectionThumbs[handle]);
+      return;
+    }
+    $.ajax({
+      url: '/collections/' + handle + '/products.json?page=1&limit=4',
+      success: function (response) {
+        var thumbs = [];
+        if (response && response.products && response.products.length) {
+          response.products.forEach(function (product) {
+            var src = null;
+            if (product.image && product.image.src) {
+              src = product.image.src;
+            } else if (product.images && product.images.length && product.images[0].src) {
+              src = product.images[0].src;
+            }
+            if (src) {
+              thumbs.push(Haravan.resizeImage(src, 'small'));
+            }
+          });
+        }
+        self.collectionThumbs[handle] = thumbs;
+        callback(thumbs);
+      },
+      error: function () {
+        self.collectionThumbs[handle] = [];
+        callback([]);
+      },
+    });
+  },
+  htmlProduct: function (data) {
+    var html = '';
+    var list = data.products || [];
+    var noImage = 'https://file.hstatic.net/200000642007/file/loading-product_166be939a5b54a2aa4d9653d29b9b21d.jpg';
+
+    list.forEach(function (product) {
+      var img = noImage;
+      if (product.featured_image) {
+        img = Haravan.resizeImage(product.featured_image, 'large');
+      } else if (product.images && product.images.length) {
+        var first = typeof product.images[0] === 'string' ? product.images[0] : product.images[0].src;
+        if (first) {
+          img = Haravan.resizeImage(first, 'large');
+        }
+      }
+
+      var price = 0;
+      var compare_at_price = 0;
+      if (product.variants && product.variants.length) {
+        price = Number(product.variants[0].price);
+        compare_at_price = Number(product.variants[0].compare_at_price);
+      } else if (product.price) {
+        price = Number(product.price);
+        compare_at_price = Number(product.compare_at_price);
+      }
+
+      html += '<div class="item-product">';
+      html += '<a class="item-product__link" href="' + product.url + '" title="' + product.title + '">';
+      html += '<div class="item-product__image"><img src="' + img + '" alt="' + product.title + '" loading="lazy"></div>';
+      html += '<div class="item-product__info">';
+      html += '<h4 class="item-product__title">' + product.title + '</h4>';
+      html += '<span class="item-product__price">' + Haravan.formatMoney(price * 100, shop.moneyFormat) + '</span>';
+      if (compare_at_price) {
+        html += '<span class="item-product__compare-price">' + Haravan.formatMoney(compare_at_price * 100, shop.moneyFormat) + '</span>';
+      }
+      html += '</div></a></div>';
+    });
+
+    return html;
+  },
+  htmlCollectionItem: function (item, thumbs) {
+    var labels = this.labels();
+    var count = item.products_count || 0;
+    var thumbsHtml = '';
+    var images = thumbs && thumbs.length ? thumbs.slice(0, 4) : [];
+
+    if (!images.length && item.image) {
+      images = [Haravan.resizeImage(item.image, 'small')];
+    }
+
+    if (images.length) {
+      images.forEach(function (src) {
+        thumbsHtml += '<span class="item-collection__thumb"><img src="' + src + '" alt="' + item.title + '"></span>';
+      });
+    } else {
+      thumbsHtml = '<span class="item-collection__thumb item-collection__thumb--empty"></span>';
+    }
+
+    var html = '';
+    html += '<div class="swiper-slide">';
+    html += '<a class="item-collection" href="/collections/' + item.handle + '" title="' + item.title + '">';
+    html += '<div class="item-collection__thumbs">' + thumbsHtml + '</div>';
+    html += '<div class="item-collection__info">';
+    html += '<h4 class="item-collection__title">' + item.title + '</h4>';
+    html += '<span class="item-collection__count">' + count + ' ' + labels.productsCount + '</span>';
+    html += '</div></a></div>';
+    return html;
+  },
+  htmlBlog: function (articles) {
+    var html = '';
+    (articles || []).forEach(function (article) {
+      var excerpt = '';
+      if (article.summary_html) {
+        excerpt = $('<div>').html(article.summary_html).text();
+      } else if (article.content) {
+        excerpt = $('<div>').html(article.content).text();
+      } else if (article.body_html) {
+        excerpt = $('<div>').html(article.body_html).text();
+      }
+      if (excerpt.length > 90) {
+        excerpt = excerpt.substring(0, 90) + '...';
+      }
+
+      var url = article.url || '';
+      if (!url && article.handle) {
+        url = '/blogs/news/' + article.handle;
+      }
+
+      html += '<div class="swiper-slide">';
+      html += '<a class="item-blog" href="' + url + '" title="' + article.title + '">';
+      html += '<h4 class="item-blog__title">' + article.title + '</h4>';
+      html += '<p class="item-blog__excerpt">' + excerpt + '</p>';
+      html += '</a></div>';
+    });
+    return html;
+  },
+  renderCollections: function (collections, callback) {
+    var self = this;
+    var $wrap = $('#mini-search .wrap-collections');
+    var $section = $('#mini-search .mini-search__section--collections');
+
+    if (!collections.length) {
+      $wrap.empty();
+      $section.addClass('is-hidden');
+      self.destroySwiper('collections');
+      if (typeof callback === 'function') {
+        callback();
+      }
+      return;
+    }
+
+    $section.removeClass('is-hidden');
+    var pending = collections.length;
+    var htmlMap = new Array(collections.length);
+
+    collections.forEach(function (item, index) {
+      self.getCollectionThumbs(item.handle, function (thumbs) {
+        htmlMap[index] = self.htmlCollectionItem(item, thumbs);
+        pending -= 1;
+        if (pending <= 0) {
+          $wrap.html(htmlMap.join(''));
+          self.initSwiper('collections');
+          if (typeof callback === 'function') {
+            callback();
+          }
+        }
+      });
+    });
+  },
+  initSwiper: function (type) {
+    var self = this;
+    self.destroySwiper(type);
+
+    if (typeof Swiper === 'undefined') {
+      return;
+    }
+
+    var selector = type === 'blogs'
+      ? '.mini-search__swiper--blogs'
+      : '.mini-search__swiper--collections';
+    var navSelector = type === 'blogs'
+      ? '.mini-search__nav--blogs'
+      : '.mini-search__nav--collections';
+    var $el = $(selector);
+    var slideCount = $el.find('.swiper-slide').length;
+
+    if (!slideCount) {
+      return;
+    }
+
+    var $nav = $(navSelector);
+    if (slideCount <= 3) {
+      $nav.addClass('is-hidden');
+    } else {
+      $nav.removeClass('is-hidden');
+    }
+
+    self.swipers[type] = new Swiper(selector, {
+      slidesPerView: 1.2,
+      spaceBetween: 12,
+      speed: 400,
+      watchOverflow: true,
+      navigation: {
+        nextEl: navSelector + ' .mini-search__nav-btn--next',
+        prevEl: navSelector + ' .mini-search__nav-btn--prev',
+      },
+      breakpoints: {
+        576: {
+          slidesPerView: 2.2,
+          spaceBetween: 14,
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 16,
+        },
+        992: {
+          slidesPerView: 3.2,
+          spaceBetween: 16,
+        },
+      },
+    });
+  },
+  destroySwiper: function (type) {
+    if (this.swipers[type] && typeof this.swipers[type].destroy === 'function') {
+      this.swipers[type].destroy(true, true);
+      this.swipers[type] = null;
+    }
+  },
+  destroySwipers: function () {
+    this.destroySwiper('collections');
+    this.destroySwiper('blogs');
+  },
+  query: function (key) {
+    var self = this;
+    var labels = self.labels();
+    var keyLower = key.toLowerCase();
+    var pending = 3;
+
+    function doneOne() {
+      pending -= 1;
+      if (pending <= 0) {
+        if (self.currentKeyword !== key) {
+          return;
+        }
+
+        var hasAny =
+          !$('#mini-search .mini-search__section--products').hasClass('is-hidden') ||
+          !$('#mini-search .mini-search__section--collections').hasClass('is-hidden') ||
+          !$('#mini-search .mini-search__section--blogs').hasClass('is-hidden');
+
+        if (!hasAny) {
+          $('#mini-search .wrap-product').html(
+            '<div class="mini-search__empty">' + labels.noResult + '</div>'
+          );
+          $('#mini-search .mini-search__section--products').removeClass('is-hidden');
+        }
+
+        $('#mini-search .mini-search__view-all')
+          .attr('href', '/search?q=' + encodeURIComponent(key))
+          .text(labels.viewAll);
+        $('#mini-search .mini-search__footer').removeClass('is-hidden');
+        self.removeLoading();
+      }
+    }
+
+    $('#mini-search .mini-search__collections-title').text(labels.collections);
+
+    $('#mini-search .mini-search__section-title').first().text(labels.products);
+
+    var productQuery =
+      '(((title:product=' +
+      key +
+      '))||((title:product**' +
+      key +
+      '))||((barcode:product**' +
+      key +
+      '))||((variant:product**' +
+      key +
+      '))||((sku:product**' +
+      key +
+      '))||((tag:product**' +
+      key +
+      ')))&&((price:product>0))&&((available:product=true))';
+
+    self.searchRequest(
+      {
+        q: 'filter=' + productQuery,
+        type: 'product',
+        page: 1,
+        limit: 8,
+      },
+      function (response) {
+        if (self.currentKeyword !== key) {
+          doneOne();
+          return;
+        }
+        if (response && response.total > 0 && response.products && response.products.length) {
+          $('#mini-search .wrap-product').html(self.htmlProduct(response));
+          $('#mini-search .mini-search__section--products').removeClass('is-hidden');
+        } else {
+          $('#mini-search .wrap-product').empty();
+          $('#mini-search .mini-search__section--products').addClass('is-hidden');
+        }
+        doneOne();
+      }
+    );
+
+    self.ensureCollections(function () {
+      if (self.currentKeyword !== key) {
+        doneOne();
+        return;
+      }
+      var filtered = self.allCollections
+        .filter(function (item) {
+          return item.title && item.title.toLowerCase().indexOf(keyLower) !== -1;
+        })
+        .slice(0, 12);
+      self.renderCollections(filtered, function () {
+        doneOne();
+      });
+    });
+
+    var articleQuery =
+      '((title:product**' + key + ')||(tag:product**' + key + '))';
+
+    self.searchRequest(
+      {
+        q: 'filter=' + articleQuery,
+        type: 'article',
+        page: 1,
+        limit: 8,
+      },
+      function (response) {
+        if (self.currentKeyword !== key) {
+          doneOne();
+          return;
+        }
+        var articles = [];
+        if (response) {
+          if (response.articles && response.articles.length) {
+            articles = response.articles;
+          } else if (response.results && response.results.length) {
+            articles = response.results;
+          } else if (response.products && response.products.length) {
+            articles = response.products;
+          }
+        }
+
+        if (articles.length) {
+          $('#mini-search .wrap-blogs').html(self.htmlBlog(articles));
+          $('#mini-search .mini-search__section--blogs').removeClass('is-hidden');
+          self.initSwiper('blogs');
+        } else {
+          $('#mini-search .wrap-blogs').empty();
+          $('#mini-search .mini-search__section--blogs').addClass('is-hidden');
+          self.destroySwiper('blogs');
+        }
+        doneOne();
+      }
+    );
+  },
+}
+MLPRO.FormCustomerMSO = {
+  $root: null,
+  messages: {},
+  init: function () {
+    var that = this;
+    that.$root = $('#modal-mso-new-signup');
+    if (!that.$root.length) return;
+
+    that.setupMessages();
+    that.bindTabs();
+    that.bindForgot();
+    that.bindTogglePassword();
+    that.bindLoginSubmit();
+    that.bindRegisterSubmit();
+    that.bindForgotSubmit();
+    that.bindClearErrorOnInput();
+    that.actionOpen();
+  },
+  actionOpen: function () {
+    var that = this;
+    $('.js-open-modal-mso-new-signup').click(function (e) {
+      e.preventDefault();
+      if (accountJS.email == null && accountJS.phone == null) {
+        that.open('login');
+      } else {
+        window.location.href = '/account';
+      }
+    });
+  },
+  setupMessages: function () {
+    var isEn = (this.$root.attr('data-lang') || window.isLanguage || 'vi') === 'en';
+    this.messages = isEn
+      ? {
+          required: 'This field is required',
+          emailInvalid: 'Please enter a valid email',
+          passwordInvalid: 'Password must be at least 8 characters, including letters and numbers, no special characters',
+          processing: this.$root.attr('data-processing') || 'Processing...',
+          success: 'Success',
+          warning: 'Something went wrong. Please try again',
+        }
+      : {
+          required: 'Vui lòng không để trống',
+          emailInvalid: 'Vui lòng nhập đúng định dạng email',
+          passwordInvalid: 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số, không bao gồm ký tự đặc biệt',
+          processing: this.$root.attr('data-processing') || 'Đang xử lý...',
+          success: 'Thành công',
+          warning: 'Đã xảy ra lỗi. Vui lòng thử lại',
+        };
+  },
+  open: function (tab) {
+    var that = this;
+    if (!that.$root || !that.$root.length) {
+      that.$root = $('#modal-mso-new-signup');
+    }
+    if (!that.$root.length) return;
+
+    that.switchTab(tab || 'login');
+    $.fancybox.open(that.$root, {
+      touch: false,
+      // clickSlide: false,
+      baseClass: 'fancybox-mso-signup',
+    });
+  },
+  switchTab: function (tab) {
+    var that = this;
+    var target = tab === 'register' ? 'register' : 'login';
+
+    that.$root.find('.mso-signup__tab').removeClass('mso-signup__tab--active');
+    that.$root.find('.mso-signup__tab[data-tab="' + target + '"]').addClass('mso-signup__tab--active');
+    that.showPanel(target);
+  },
+  showPanel: function (panel) {
+    var that = this;
+    that.$root.find('.mso-signup__panel').removeClass('is-active');
+    that.$root.find('.mso-signup__panel[data-panel="' + panel + '"]').addClass('is-active');
+    that.clearAllErrors();
+    that.clearAllStatuses();
+    that.resetAllButtons();
+  },
+  bindTabs: function () {
+    var that = this;
+    that.$root.on('click', '.mso-signup__tab', function () {
+      var tab = $(this).attr('data-tab');
+      that.switchTab(tab);
+    });
+  },
+  bindForgot: function () {
+    var that = this;
+    that.$root.on('click', '.mso-signup__forgot-link', function (e) {
+      e.preventDefault();
+      that.$root.find('.mso-signup__tab').removeClass('mso-signup__tab--active');
+      that.$root.find('.mso-signup__tab[data-tab="login"]').addClass('mso-signup__tab--active');
+      that.showPanel('forgot');
+    });
+  },
+  bindTogglePassword: function () {
+    var that = this;
+    that.$root.on('click', '.mso-signup__eye', function () {
+      var $wrap = $(this).closest('.mso-signup__password');
+      var $input = $wrap.find('input');
+      $wrap.toggleClass('show-pass');
+      $input.attr('type', $input.attr('type') === 'password' ? 'text' : 'password');
+    });
+  },
+  bindClearErrorOnInput: function () {
+    var that = this;
+    that.$root.on('input', '.mso-signup__input', function () {
+      that.clearFieldError($(this));
+    });
+  },
+  clearFieldError: function ($input) {
+    $input.removeClass('is-invalid');
+    $input.closest('.mso-signup__field').find('.mso-signup__error').removeClass('is-show').text('');
+  },
+  clearAllErrors: function () {
+    var that = this;
+    that.$root.find('.mso-signup__input').removeClass('is-invalid');
+    that.$root.find('.mso-signup__error').removeClass('is-show').text('');
+  },
+  showFieldError: function ($form, fieldName, message) {
+    var $input = $form.find('[name="' + fieldName + '"]');
+    var $error = $form.find('[data-error-for="' + fieldName + '"]');
+    $input.addClass('is-invalid');
+    $error.addClass('is-show').text(message);
+  },
+  isValidEmail: function (email) {
+    return MLPRO.Module.validateEmail(email) && email !== '';
+  },
+  isValidPassword(password) {
+    return /^(?=.*[A-Za-zÀ-ỹ])(?=.*\d).{8,}$/.test(password);
+  },
+  setButtonProcessing: function ($form) {
+    var that = this;
+    var $btn = $form.find('.mso-signup__submit');
+    if (!$btn.data('defaultText')) {
+      $btn.data('defaultText', $btn.attr('data-default-text') || $btn.text());
+    }
+    that.clearFormStatus($form);
+    $btn.prop('disabled', true).text(that.messages.processing);
+  },
+  setFormStatus: function ($form, type, message) {
+    var that = this;
+    var $btn = $form.find('.mso-signup__submit');
+    var $status = $form.find('.mso-signup__status');
+    var text = message || (type === 'success' ? that.messages.success : that.messages.warning);
+
+    that.resetButton($btn);
+    $status
+      .removeClass('mso-signup__status--success mso-signup__status--warning is-show')
+      .addClass('is-show mso-signup__status--' + (type === 'success' ? 'success' : 'warning'))
+      .html(text);
+  },
+  clearFormStatus: function ($form) {
+    $form.find('.mso-signup__status').removeClass('mso-signup__status--success mso-signup__status--warning is-show').html('');
+  },
+  clearAllStatuses: function () {
+    var that = this;
+    that.$root.find('.mso-signup__status').removeClass('mso-signup__status--success mso-signup__status--warning is-show').html('');
+  },
+  resetButton: function ($btn) {
+    var defaultText = $btn.data('defaultText') || $btn.attr('data-default-text') || $btn.text();
+    $btn.prop('disabled', false).text(defaultText);
+  },
+  resetAllButtons: function () {
+    var that = this;
+    that.$root.find('.mso-signup__submit').each(function () {
+      that.resetButton($(this));
+    });
+  },
+  translateMessages: function (messages) {
+    var that = this;
+    var textMessage = messages;
+    if (shop.language == 'en') {
+      if (messages.indexOf('Thông tin đăng nhập không hợp lệ') != -1) {
+        textMessage = 'Invalid login information';
+      } else if (messages.indexOf('quá hạn') != -1) {
+        textMessage = 'Please refresh the page';
+      } else if (messages.indexOf('Không tìm thấy tài khoản nào với email này') != -1) {
+        textMessage = 'No account found with this email';
+      } else if (messages.indexOf('Email đã tồn tại') != -1) {
+        textMessage = 'Email already exists';
+      } else if (messages.indexOf('Lỗi hệ thống') != -1) {
+        textMessage = 'System error';
+      } else if (messages.indexOf('xin vui lòng vào liên kết') != -1) {
+        textMessage = 'We have sent an email to your email, please click the link in the email to verify.';
+      }
+    }
+    return textMessage;
+  },
+  viewAPI: function (view, callback) {
+    $.get('?view=' + view, function (res) {
+      var html = $(res);
+      var token = html.find('input[name="__RequestVerificationToken"]').val();
+      if (typeof callback === 'function') {
+        return callback(token);
+      }
+    });
+  },
+  bindLoginSubmit: function () {
+    var that = this;
+    that.$root.on('submit', '#mso-form-login', function (e) {
+      e.preventDefault();
+      var $form = $(this);
+      var email = $.trim($form.find('[name="email"]').val());
+      var password = $form.find('[name="password"]').val();
+      var isValid = true;
+
+      that.clearAllErrors();
+
+      if (!email) {
+        that.showFieldError($form, 'email', that.messages.required);
+        isValid = false;
+      } else if (!that.isValidEmail(email)) {
+        that.showFieldError($form, 'email', that.messages.emailInvalid);
+        isValid = false;
+      }
+
+      if (!password) {
+        that.showFieldError($form, 'password', that.messages.required);
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      that.setButtonProcessing($form);
+
+      that.viewAPI('login', function (verifyToken) {
+        grecaptcha.ready(function () {
+          grecaptcha.execute('6LchSLkqAAAAABVHBpeFgg8N-WgkYsr5fO6GUF_s', { action: 'submit' }).then(function (token) {
+            $.ajax({
+              type: 'POST',
+              url: '/account/login',
+              data: {
+                customer: {
+                  email: email,
+                  password: password,
+                },
+                __RequestVerificationToken: verifyToken,
+                'g-recaptcha-response': token,
+              },
+              form_type: 'customer_login',
+              utf8: '✓',
+              success: function (data) {
+                var parsedResponse = $.parseHTML(data);
+                var result = $(parsedResponse);
+                if (result.find('#customer_login .errors').length > 0) {
+                  var titleError = result.find('#customer_login .errors li').html();
+                  titleError = that.translateMessages(titleError);
+                  that.setFormStatus($form, 'warning', titleError);
+                } else {
+                  var customMess = 'Đăng nhập thành công. Đang chuyển tới trang tài khoản...';
+                  if (shop.language == 'en') {
+                    customMess = 'Login successful. Redirecting to account page...';
+                  }
+                  that.setFormStatus($form, 'success', customMess);
+                  setTimeout(function () {
+                    window.location.href = '/account';
+                  }, 2000);
+                }
+              },
+              error: function () {
+                var titleError = that.translateMessages(that.messages.warning);
+                that.setFormStatus($form, 'warning', titleError);
+              },
+            });
+          });
+        });
+      });
+    });
+  },
+  bindRegisterSubmit: function () {
+    var that = this;
+    that.$root.on('submit', '#mso-form-register', function (e) {
+      e.preventDefault();
+      var $form = $(this);
+      var lastName = $.trim($form.find('[name="last_name"]').val());
+      var firstName = $.trim($form.find('[name="first_name"]').val());
+      var email = $.trim($form.find('[name="email"]').val());
+      var password = $form.find('[name="password"]').val();
+      var isValid = true;
+
+      that.clearAllErrors();
+
+      if (!lastName) {
+        that.showFieldError($form, 'last_name', that.messages.required);
+        isValid = false;
+      }
+
+      if (!firstName) {
+        that.showFieldError($form, 'first_name', that.messages.required);
+        isValid = false;
+      }
+
+      if (!email) {
+        that.showFieldError($form, 'email', that.messages.required);
+        isValid = false;
+      } else if (!that.isValidEmail(email)) {
+        that.showFieldError($form, 'email', that.messages.emailInvalid);
+        isValid = false;
+      }
+
+      if (!password) {
+        that.showFieldError($form, 'password', that.messages.required);
+        isValid = false;
+      } else if (!that.isValidPassword(password)) {
+        that.showFieldError($form, 'password', that.messages.passwordInvalid);
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      that.setButtonProcessing($form);
+
+      that.viewAPI('register', function (verifyToken) {
+        grecaptcha.ready(function () {
+          grecaptcha.execute('6LchSLkqAAAAABVHBpeFgg8N-WgkYsr5fO6GUF_s', { action: 'submit' }).then(function (token) {
+            $.ajax({
+              type: 'POST',
+              url: '/account',
+              data: {
+                customer: {
+                  last_name: lastName,
+                  first_name: firstName,
+                  email: email,
+                  password: password,
+                },
+                __RequestVerificationToken: verifyToken,
+                'g-recaptcha-response': token,
+              },
+              form_type: 'create_customer',
+              utf8: '✓',
+              success: function (data) {
+                var parsedResponse = $.parseHTML(data);
+                var result = $(parsedResponse);
+                if (result.find('#create_customer .errors').length > 0) {
+                  var titleError = result.find('#create_customer .errors li').html();
+                  titleError = that.translateMessages(titleError);
+                  that.setFormStatus($form, 'warning', titleError);
+                } else {
+                  var customMess = 'Đăng ký thành công. Đang chuyển tới trang tài khoản...';
+                  if (shop.language == 'en') {
+                    customMess = 'Registration successful. Redirecting to account page...';
+                  }
+                  that.setFormStatus($form, 'success', customMess);
+                  setTimeout(function () {
+                    window.location.href = '/account';
+                  }, 2000);
+                }
+              },
+              error: function () {
+                var titleError = that.translateMessages(that.messages.warning);
+                that.setFormStatus($form, 'warning', titleError);
+              },
+            });
+          });
+        });
+      });
+    });
+  },
+  bindForgotSubmit: function () {
+    var that = this;
+    that.$root.on('submit', '#mso-form-forgot', function (e) {
+      e.preventDefault();
+      var $form = $(this);
+      var email = $.trim($form.find('[name="email"]').val());
+      var isValid = true;
+
+      that.clearAllErrors();
+
+      if (!email) {
+        that.showFieldError($form, 'email', that.messages.required);
+        isValid = false;
+      } else if (!that.isValidEmail(email)) {
+        that.showFieldError($form, 'email', that.messages.emailInvalid);
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      that.setButtonProcessing($form);
+
+      that.viewAPI('forgot', function (verifyToken) {
+        grecaptcha.ready(function () {
+          grecaptcha.execute('6LchSLkqAAAAABVHBpeFgg8N-WgkYsr5fO6GUF_s', { action: 'submit' }).then(function (token) {
+            $.ajax({
+              type: 'POST',
+              url: '/account/recover',
+              data: {
+                form_type: 'recover_customer_password',
+                utf8: '✓',
+                email: email,
+                'g-recaptcha-response': token,
+                __RequestVerificationToken: verifyToken,
+              },
+              form_type: 'recover_customer_password',
+              utf8: '✓',
+              success: function (data) {
+                var parsedResponse = $.parseHTML(data);
+                var result = $(parsedResponse);
+                if (result.find('form[action="/account/recover"] .errors').length > 0) {
+                  var titleError = result.find('form[action="/account/recover"] .errors li').html();
+                  titleError = that.translateMessages(titleError);
+                  that.setFormStatus($form, 'warning', titleError);
+                } else {
+                  var customMess = 'Chúng tôi đã gửi email đến email của bạn, vui lòng click vào liên kết trong email để đặt lại mật khẩu.';
+                  if (shop.language == 'en') {
+                    customMess = 'We have sent an email to your email, please click the link in the email to reset your password.';
+                  }
+                  that.setFormStatus($form, 'success', customMess);
+                }
+              },
+              error: function () {
+                var titleError = that.translateMessages(that.messages.warning);
+                that.setFormStatus($form, 'warning', titleError);
+              },
+            });
+          });
+        });
+      });
+    });
+  },
+};
+MLPRO.MiniCart = {
+  isOpen: false,
+  closeTimer: null,
+  bound: false,
+  init: function () {
+    var self = this;
+    if (!$('#mini-cart').length) {
+      return;
+    }
+    self.bindEvents();
+    self.refresh();
+  },
+  labels: function () {
+    var $el = $('#mini-cart');
+    return {
+      remove: $el.data('label-remove') || 'Remove',
+      decrease: $el.data('label-decrease') || 'Decrease quantity',
+      increase: $el.data('label-increase') || 'Increase quantity',
+      applySuccess: $el.data('label-apply-success') || 'Discount code applied',
+      applyError: $el.data('label-apply-error') || 'Please enter a discount code',
+      applyExists: $el.data('label-apply-exists') || 'This discount code is already applied',
+      applyInvalid: $el.data('label-apply-invalid') || 'Invalid discount code',
+      applyFail: $el.data('label-apply-fail') || 'Could not apply discount code',
+      removeCode: $el.data('label-remove-code') || 'Remove discount code',
+    };
+  },
+  bindEvents: function () {
+    var self = this;
+    var $cart = $('#mini-cart');
+
+    if (self.bound) {
+      return;
+    }
+    self.bound = true;
+
+    $(document).on('click', '.js-open-mini-cart', function (e) {
+      e.preventDefault();
+      self.refresh(function () {
+        self.open();
+      });
+    });
+
+    $cart.on('click', '[data-mini-cart-close]', function () {
+      self.close();
+    });
+
+    $cart.on('click', '.js-mini-cart-continue', function () {
+      self.close();
+    });
+
+    $cart.on('click', '.js-open-modal-mso-new-signup', function () {
+      self.close();
+    });
+
+    $cart.on('click', '.js-mini-cart-discount-toggle', function () {
+      var $discount = $(this).closest('.mini-cart__discount');
+      var isOpen = $discount.toggleClass('is-open').hasClass('is-open');
+      $(this).attr('aria-expanded', isOpen);
+      if (isOpen) {
+        $discount.find('.js-mini-cart-discount-input').focus();
+      }
+    });
+
+    $cart.on('click', '.js-mini-cart-discount-apply', function () {
+      self.applyDiscount();
+    });
+
+    $cart.on('keydown', '.js-mini-cart-discount-input', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        self.applyDiscount();
+      }
+    });
+
+    $cart.on('click', '.js-mini-cart-qty', function () {
+      var $btn = $(this);
+      var variantId = $btn.data('variant-id');
+      var qty = parseInt($btn.data('qty'), 10);
+      if (!variantId || isNaN(qty)) {
+        return;
+      }
+      self.changeQuantity(variantId, qty);
+    });
+
+    $cart.on('click', '.js-mini-cart-remove', function () {
+      var variantId = $(this).data('variant-id');
+      if (!variantId) {
+        return;
+      }
+      self.changeQuantity(variantId, 0);
+    });
+
+    $cart.on('click', '.js-mini-cart-code-remove', function () {
+      var code = $(this).data('code');
+      if (!code) {
+        return;
+      }
+      self.removeDiscount(code);
+    });
+
+    $(document).on('keydown.miniCart', function (e) {
+      if (e.key === 'Escape' && self.isOpen) {
+        self.close();
+      }
+    });
+
+    $cart.find('.mini-cart__drawer').on('transitionend', function (e) {
+      if (e.target !== this || e.originalEvent.propertyName !== 'transform') {
+        return;
+      }
+      clearTimeout(self.closeTimer);
+      self.finishClose();
+    });
+  },
+  open: function () {
+    var self = this;
+    var $cart = $('#mini-cart');
+    if (!$cart.length || self.isOpen) {
+      return;
+    }
+    clearTimeout(self.closeTimer);
+    $cart.addClass('is-visible').attr('aria-hidden', 'false');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        $cart.addClass('is-open');
+        self.isOpen = true;
+        $('body').addClass('open-mini-cart');
+      });
+    });
+  },
+  close: function () {
+    var self = this;
+    var $cart = $('#mini-cart');
+    if (!$cart.hasClass('is-open')) {
+      return;
+    }
+    $cart.removeClass('is-open');
+    self.isOpen = false;
+    $('body').removeClass('open-mini-cart');
+    clearTimeout(self.closeTimer);
+    self.closeTimer = setTimeout(function () {
+      self.finishClose();
+    }, 420);
+  },
+  finishClose: function () {
+    var $cart = $('#mini-cart');
+    if (!$cart.hasClass('is-open')) {
+      $cart.removeClass('is-visible').attr('aria-hidden', 'true');
+    }
+  },
+  getCheckoutData: function (payload) {
+    if (!payload) {
+      return {};
+    }
+    if (payload.checkouts) {
+      return payload.checkouts;
+    }
+    return payload;
+  },
+  refresh: function (callback) {
+    var self = this;
+    $.getJSON('/checkouts.js')
+      .done(function (result) {
+        window.checkoutsJS = result;
+        self.render(result);
+        if (typeof callback === 'function') {
+          callback(result);
+        }
+      })
+      .fail(function () {
+        self.render(window.checkoutsJS || {});
+        if (typeof callback === 'function') {
+          callback(window.checkoutsJS || {});
+        }
+      });
+  },
+  formatMoney: function (price) {
+    if (typeof Haravan !== 'undefined' && typeof Haravan.formatMoney === 'function') {
+      return Haravan.formatMoney(price * 100, shop.moneyFormat);
+    }
+    return price;
+  },
+  escapeHtml: function (text) {
+    return $('<div>').text(text == null ? '' : text).html();
+  },
+  getItems: function (checkout) {
+    return checkout.line_items || checkout.items || [];
+  },
+  getItemCount: function (checkout, items) {
+    if (checkout.item_count != null) {
+      return parseInt(checkout.item_count, 10) || 0;
+    }
+    return items.reduce(function (sum, item) {
+      return sum + (parseInt(item.quantity, 10) || 0);
+    }, 0);
+  },
+  getTotalPrice: function (checkout) {
+    if (checkout.total_price != null) {
+      return checkout.total_price;
+    }
+    if (checkout.payment_due != null) {
+      return checkout.payment_due;
+    }
+    if (checkout.subtotal_price != null) {
+      return checkout.subtotal_price;
+    }
+    return 0;
+  },
+  getAppliedCoupons: function (checkout) {
+    var list = [];
+    var allocations = checkout.discount_allocations || [];
+
+    allocations.forEach(function (item) {
+      if (item && item.code && item.code !== 'LOYALTY_POINT') {
+        list.push(item.code);
+      }
+    });
+
+    if (checkout.gift_cards && checkout.gift_cards.length) {
+      checkout.gift_cards.forEach(function (gift) {
+        if (gift && gift.name) {
+          list.push(gift.name);
+        }
+      });
+    }
+
+    return list;
+  },
+  getDiscountDetails: function (checkout) {
+    var details = [];
+    var allocations = checkout.discount_allocations || [];
+
+    allocations.forEach(function (item) {
+      if (!item || !item.code || item.code === 'LOYALTY_POINT') {
+        return;
+      }
+      details.push({
+        code: item.code,
+        amount: Math.abs(item.savings != null ? item.savings : (item.amount != null ? item.amount : 0)),
+      });
+    });
+
+    if (checkout.gift_cards && checkout.gift_cards.length) {
+      checkout.gift_cards.forEach(function (gift) {
+        if (!gift || !gift.name) {
+          return;
+        }
+        details.push({
+          code: gift.name,
+          amount: Math.abs(gift.amount_used != null ? gift.amount_used : (gift.balance != null ? gift.balance : 0)),
+        });
+      });
+    }
+
+    return details;
+  },
+  getItemImage: function (item) {
+    var image = item.image || item.image_url || '';
+    if (!image && item.inAdmin && item.inAdmin.featured_image) {
+      image = item.inAdmin.featured_image;
+    }
+    if (!image) {
+      return '';
+    }
+    if (typeof Haravan !== 'undefined' && typeof Haravan.resizeImage === 'function' && image.indexOf('http') === 0) {
+      return Haravan.resizeImage(image, 'small');
+    }
+    return image;
+  },
+  getItemUrl: function (item) {
+    if (item.url) {
+      return item.url;
+    }
+    if (item.handle) {
+      return '/products/' + item.handle;
+    }
+    if (item.product_id) {
+      return '/products/' + item.product_id;
+    }
+    return '#';
+  },
+  renderItem: function (item) {
+    var self = this;
+    var labels = self.labels();
+    var image = self.getItemImage(item);
+    var title = item.product_title || item.title || '';
+    var variant = item.variant_title && item.variant_title !== 'Default Title' ? item.variant_title : '';
+    var unitPrice = self.formatMoney(item.price);
+    var linePrice = self.formatMoney(item.line_price != null ? item.line_price : item.price * item.quantity);
+    var qty = parseInt(item.quantity, 10) || 1;
+    var url = self.getItemUrl(item);
+    var variantId = item.variant_id || item.id;
+
+    var imageHtml = image
+      ? '<img src="' + image + '" alt="' + self.escapeHtml(title) + '" loading="lazy">'
+      : '<span class="mini-cart__item-placeholder">No image</span>';
+
+    return (
+      '<div class="mini-cart__item" data-variant-id="' + variantId + '">' +
+        '<div class="mini-cart__item-image">' +
+          '<a href="' + url + '">' + imageHtml + '</a>' +
+        '</div>' +
+        '<div class="mini-cart__item-info">' +
+          '<div class="mini-cart__item-top">' +
+            '<h3 class="mini-cart__item-title"><a href="' + url + '">' + self.escapeHtml(title) + '</a></h3>' +
+            '<span class="mini-cart__item-line-price">' + linePrice + '</span>' +
+          '</div>' +
+          (variant ? '<p class="mini-cart__item-variant">' + self.escapeHtml(variant) + '</p>' : '') +
+          '<p class="mini-cart__item-price">' + unitPrice + '</p>' +
+          '<div class="mini-cart__item-actions">' +
+            '<div class="mini-cart__qty">' +
+              '<button type="button" class="mini-cart__qty-btn js-mini-cart-qty" data-variant-id="' + variantId + '" data-qty="' + (qty - 1) + '" aria-label="' + labels.decrease + '">−</button>' +
+              '<span class="mini-cart__qty-value">' + qty + '</span>' +
+              '<button type="button" class="mini-cart__qty-btn js-mini-cart-qty" data-variant-id="' + variantId + '" data-qty="' + (qty + 1) + '" aria-label="' + labels.increase + '">+</button>' +
+            '</div>' +
+            '<button type="button" class="mini-cart__remove js-mini-cart-remove" data-variant-id="' + variantId + '" aria-label="' + labels.remove + '">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+                '<path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                '<path d="M9 7V5C9 4.448 9.448 4 10 4H14C14.552 4 15 4.448 15 5V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                '<path d="M18 7L17.2 19.1C17.13 20.16 16.26 21 15.2 21H8.8C7.74 21 6.87 20.16 6.8 19.1L6 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                '<path d="M10 11V17M14 11V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+              '</svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  },
+  renderAppliedDiscounts: function (checkout) {
+    var self = this;
+    var labels = self.labels();
+    var details = self.getDiscountDetails(checkout);
+
+    if (!details.length) {
+      return '';
+    }
+
+    return details.map(function (item) {
+      var amountText = item.amount
+        ? '-' + self.formatMoney(item.amount)
+        : '';
+      return (
+        '<div class="mini-cart__applied-item" data-code="' + self.escapeHtml(item.code) + '">' +
+          '<span class="mini-cart__applied-code">' + self.escapeHtml(item.code) + '</span>' +
+          '<div class="mini-cart__applied-right">' +
+            (amountText ? '<span class="mini-cart__applied-amount">' + amountText + '</span>' : '') +
+            '<button type="button" class="mini-cart__applied-remove js-mini-cart-code-remove" data-code="' + self.escapeHtml(item.code) + '" aria-label="' + labels.removeCode + '">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+                '<path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+              '</svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  },
+  render: function (payload) {
+    var self = this;
+    var $cart = $('#mini-cart');
+    if (!$cart.length) {
+      return;
+    }
+
+    var checkout = self.getCheckoutData(payload);
+    var items = self.getItems(checkout);
+    var itemCount = self.getItemCount(checkout, items);
+    var isEmpty = itemCount <= 0 || !items.length;
+    var totalPrice = self.getTotalPrice(checkout);
+
+    $cart.find('.mini-cart__state--empty').toggleClass('is-active', isEmpty);
+    $cart.find('.mini-cart__state--filled').toggleClass('is-active', !isEmpty);
+    $cart.find('.js-mini-cart-count').text(itemCount);
+    $cart.find('.js-mini-cart-total').text(self.formatMoney(totalPrice));
+    $cart.find('.js-mini-cart-applied').html(isEmpty ? '' : self.renderAppliedDiscounts(checkout));
+
+    if (isEmpty) {
+      $cart.find('.js-mini-cart-items').empty();
+    } else {
+      var html = items.map(function (item) {
+        return self.renderItem(item);
+      }).join('');
+      $cart.find('.js-mini-cart-items').html(html);
+    }
+
+    self.updateHeaderCount(itemCount);
+  },
+  updateHeaderCount: function (count) {
+    var $badge = $('.site-header__cart-count');
+    if (!$badge.length) {
+      return;
+    }
+    count = parseInt(count, 10) || 0;
+    $badge.text(count);
+    if (count > 0) {
+      $badge.show();
+    } else {
+      $badge.hide();
+    }
+  },
+  setLoading: function (isLoading) {
+    $('#mini-cart').toggleClass('is-loading', !!isLoading);
+  },
+  showDiscountMessage: function (type, text) {
+    var $message = $('#mini-cart .js-mini-cart-discount-message');
+    $message
+      .removeAttr('hidden')
+      .removeClass('is-success is-error')
+      .addClass(type === 'success' ? 'is-success' : 'is-error')
+      .text(text || '');
+  },
+  clearDiscountMessage: function () {
+    $('#mini-cart .js-mini-cart-discount-message')
+      .attr('hidden', true)
+      .removeClass('is-success is-error')
+      .text('');
+  },
+  postDiscounts: function (coupons, callback) {
+    var self = this;
+    $.ajax({
+      url: '/checkouts/discounts.js',
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      data: JSON.stringify({ coupons: coupons }),
+      success: function (result) {
+        window.checkoutsJS = result;
+        self.render(result);
+        if (typeof callback === 'function') {
+          callback(null, result);
+        }
+      },
+      error: function (xhr) {
+        if (typeof callback === 'function') {
+          callback(xhr || true);
+        }
+      }
+    });
+  },
+  changeQuantity: function (variantId, quantity) {
+    var self = this;
+    self.setLoading(true);
+    $.ajax({
+      type: 'POST',
+      url: '/cart/change.js',
+      dataType: 'json',
+      data: {
+        id: variantId,
+        quantity: quantity
+      },
+      success: function () {
+        self.refresh(function () {
+          self.setLoading(false);
+        });
+      },
+      error: function (xhr, status) {
+        self.setLoading(false);
+        if (typeof Haravan !== 'undefined' && typeof Haravan.onError === 'function') {
+          Haravan.onError(xhr, status);
+        }
+      }
+    });
+  },
+  applyDiscount: function () {
+    var self = this;
+    var labels = self.labels();
+    var $cart = $('#mini-cart');
+    var $input = $cart.find('.js-mini-cart-discount-input');
+    var code = $.trim($input.val() || '');
+    var checkout = self.getCheckoutData(window.checkoutsJS);
+    var uniqueCoupons = self.getAppliedCoupons(checkout);
+
+    self.clearDiscountMessage();
+
+    if (!code) {
+      self.showDiscountMessage('error', labels.applyError);
+      return;
+    }
+
+    if (uniqueCoupons.some(function (item) {
+      return String(item).toLowerCase() === code.toLowerCase();
+    })) {
+      self.showDiscountMessage('error', labels.applyExists);
+      return;
+    }
+
+    uniqueCoupons.push(code);
+    self.setLoading(true);
+
+    self.postDiscounts(uniqueCoupons, function (err, result) {
+      self.setLoading(false);
+
+      if (err) {
+        self.showDiscountMessage('error', labels.applyFail);
+        return;
+      }
+
+      var updated = self.getCheckoutData(result);
+      var applied = self.getAppliedCoupons(updated);
+      var isApplied = applied.some(function (item) {
+        return String(item).toLowerCase() === code.toLowerCase();
+      });
+
+      $input.val('');
+
+      if (isApplied) {
+        self.showDiscountMessage('success', labels.applySuccess);
+      } else {
+        self.showDiscountMessage('error', labels.applyInvalid);
+      }
+    });
+  },
+  removeDiscount: function (codeRemove) {
+    var self = this;
+    var labels = self.labels();
+    var checkout = self.getCheckoutData(window.checkoutsJS);
+    var coupons = self.getAppliedCoupons(checkout).filter(function (code) {
+      return code !== codeRemove;
+    });
+
+    self.clearDiscountMessage();
+    self.setLoading(true);
+
+    self.postDiscounts(coupons, function (err) {
+      self.setLoading(false);
+      if (err) {
+        self.showDiscountMessage('error', labels.applyFail);
       }
     });
   }

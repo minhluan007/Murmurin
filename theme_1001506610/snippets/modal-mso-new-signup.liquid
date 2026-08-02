@@ -1,0 +1,231 @@
+{%- assign language = cart.attributes.language | default: 'vn' -%}
+
+{%- assign tab_login = 'ĐĂNG NHẬP' -%}
+{%- assign tab_register = 'ĐĂNG KÝ' -%}
+{%- assign label_email = 'EMAIL' -%}
+{%- assign label_password = 'MẬT KHẨU' -%}
+{%- assign label_last_name = 'HỌ' -%}
+{%- assign label_first_name = 'TÊN' -%}
+{%- assign placeholder_email = 'Nhập Email' -%}
+{%- assign placeholder_password = 'Nhập mật khẩu' -%}
+{%- assign placeholder_last_name = 'Nhập họ của bạn' -%}
+{%- assign placeholder_first_name = 'Nhập tên của bạn' -%}
+{%- assign btn_login = 'ĐĂNG NHẬP' -%}
+{%- assign btn_register = 'TẠO TÀI KHOẢN' -%}
+{%- assign btn_forgot = 'XÁC THỰC EMAIL' -%}
+{%- assign btn_processing = 'Đang xử lý...' -%}
+{%- assign link_forgot = 'QUÊN MẬT KHẨU?' -%}
+{%- assign social_google = 'ĐĂNG NHẬP GOOGLE' -%}
+{%- assign social_facebook = 'ĐĂNG NHẬP FACEBOOK' -%}
+{%- assign login_note = 'Đăng nhập để thanh toán nhanh hơn và tận hưởng các <strong><a href="/pages/chuong-trinh-khach-hang-than-thiet">đặc quyền dành cho thành viên</a></strong>' -%}
+{%- assign forgot_note = 'Vui lòng nhập email của bạn ở đây để nhận hướng dẫn đặt lại mật khẩu.' -%}
+{%- assign password_hint = 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số, không bao gồm ký tự đặc biệt' -%}
+{%- capture terms_text -%}
+Bằng cách tạo tài khoản ở {{ shop.name }} là bạn đồng ý với các <a href="/pages/chinh-sach-bao-mat-thong-tin" target="_blank">Chính sách Bảo mật</a> và <a href="/pages/dieu-khoan-dieu-kien" target="_blank">Điều khoản - Điều kiện</a>
+{%- endcapture -%}
+{% comment %}
+  {%- if language == 'en' -%}
+    {%- assign tab_login = 'LOGIN' -%}
+    {%- assign tab_register = 'REGISTER' -%}
+    {%- assign label_email = 'EMAIL' -%}
+    {%- assign label_password = 'PASSWORD' -%}
+    {%- assign label_last_name = 'LAST NAME' -%}
+    {%- assign label_first_name = 'FIRST NAME' -%}
+    {%- assign placeholder_email = 'Enter Email' -%}
+    {%- assign placeholder_password = 'Enter password' -%}
+    {%- assign placeholder_last_name = 'Enter your last name' -%}
+    {%- assign placeholder_first_name = 'Enter your first name' -%}
+    {%- assign btn_login = 'LOGIN' -%}
+    {%- assign btn_register = 'CREATE ACCOUNT' -%}
+    {%- assign btn_forgot = 'VERIFY EMAIL' -%}
+    {%- assign btn_processing = 'Processing...' -%}
+    {%- assign link_forgot = 'FORGOT PASSWORD?' -%}
+    {%- assign social_google = 'LOGIN WITH GOOGLE' -%}
+    {%- assign social_facebook = 'LOGIN WITH FACEBOOK' -%}
+    {%- assign login_note = 'Sign in to check out faster and enjoy <strong><a href="/pages/chuong-trinh-khach-hang-than-thiet">membership privileges</a></strong>' -%}
+    {%- assign forgot_note = 'Please enter your email here to receive password reset instructions.' -%}
+    {%- assign password_hint = 'Password must be at least 8 characters, including letters and numbers, no special characters' -%}
+    {%- capture terms_text -%}
+  	By creating an account at {{ shop.name }}, you agree to the <a href="/pages/chinh-sach-bao-mat-thong-tin" target="_blank">Privacy Policy</a> and <a href="/pages/dieu-khoan-dieu-kien" target="_blank">Terms & Conditions</a>
+  	{%- endcapture -%}
+  {%- endif -%}
+{% endcomment %}
+
+{%- capture icon_eye_off -%}
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.11519 6.00001C1.20691 6.12331 1.32873 6.28226 1.47797 6.46657C1.84654 6.92178 2.37913 7.52769 3.03537 8.13205C3.62687 8.67679 4.30247 9.20518 5.03556 9.62407L5.78593 8.46973C5.04001 7.85777 4.5625 6.94844 4.5625 5.92005C4.5625 4.04333 6.15276 2.56311 8.06243 2.56311C8.55225 2.56311 9.02105 2.66049 9.44739 2.83697L10.0405 1.92451C9.38802 1.66024 8.70251 1.50037 7.99983 1.50037C6.12141 1.50037 4.3657 2.64282 3.03537 3.86798C2.37913 4.47234 1.84654 5.07825 1.47797 5.53346C1.32873 5.71777 1.20691 5.87672 1.11519 6.00001ZM10.9463 2.36584L10.3091 3.34617C11.0721 3.95822 11.5624 4.87802 11.5624 5.92005C11.5624 7.79677 9.9721 9.27699 8.06243 9.27699C7.55887 9.27699 7.07752 9.17407 6.64167 8.98809L5.9399 10.0677C6.59815 10.3366 7.29023 10.4997 7.99983 10.4997C9.87825 10.4997 11.634 9.35721 12.9643 8.13205C13.6205 7.52769 14.1531 6.92178 14.5217 6.46657C14.6709 6.28226 14.7927 6.12331 14.8845 6.00001C14.7927 5.87672 14.6709 5.71777 14.5217 5.53346C14.1531 5.07825 13.6205 4.47234 12.9643 3.86798C12.368 3.31884 11.6863 2.78632 10.9463 2.36584ZM7.19761 8.13284C7.46588 8.22593 7.75686 8.277 8.06243 8.277C9.4664 8.277 10.5624 7.19903 10.5624 5.92005C10.5624 5.24417 10.2563 4.62441 9.76044 4.19022L7.19761 8.13284ZM8.88989 3.69462C8.63204 3.60956 8.35387 3.56311 8.06243 3.56311C6.65847 3.56311 5.5625 4.64108 5.5625 5.92005C5.5625 6.58272 5.85672 7.19143 6.33555 7.6242L8.88989 3.69462ZM15.4997 6.00001C15.9147 5.72125 15.9146 5.72111 15.9145 5.72096L15.9143 5.72055L15.9135 5.7194L15.911 5.71575L15.9024 5.70312C15.895 5.69237 15.8844 5.67701 15.8707 5.65735C15.8432 5.61803 15.8031 5.56149 15.751 5.49017C15.6468 5.34759 15.4944 5.14568 15.2989 4.90418C14.9084 4.42195 14.3427 3.77795 13.6417 3.1324C12.2577 1.85774 10.2634 0.500366 7.99983 0.500366C5.73621 0.500366 3.742 1.85774 2.35793 3.1324C1.65697 3.77795 1.09123 4.42195 0.700781 4.90418C0.505246 5.14568 0.352871 5.34759 0.248677 5.49017C0.196561 5.56149 0.156444 5.61803 0.128955 5.65735C0.115208 5.67701 0.104614 5.69237 0.0972506 5.70312L0.0886363 5.71575L0.0861636 5.7194L0.0853889 5.72055L0.0851174 5.72096C0.0850139 5.72111 0.0849233 5.72125 0.5 6.00001L0.0849233 5.72125C-0.0283078 5.88984 -0.0283078 6.11018 0.0849233 6.27878L0.5 6.00001C0.0849233 6.27878 0.0850139 6.27892 0.0851174 6.27907L0.0853889 6.27947L0.0861636 6.28062L0.0886363 6.28428L0.0972506 6.29691C0.104614 6.30766 0.115208 6.32302 0.128955 6.34268C0.156444 6.38199 0.196561 6.43854 0.248677 6.50985C0.352871 6.65243 0.505246 6.85435 0.700781 7.09585C1.09123 7.57807 1.65697 8.22208 2.35793 8.86763C3.742 10.1423 5.73621 11.4997 7.99983 11.4997C10.2634 11.4997 12.2577 10.1423 13.6417 8.86763C14.3427 8.22208 14.9084 7.57807 15.2989 7.09585C15.4944 6.85435 15.6468 6.65243 15.751 6.50985C15.8031 6.43854 15.8432 6.38199 15.8707 6.34268C15.8844 6.32302 15.895 6.30766 15.9024 6.29691L15.911 6.28428L15.9135 6.28062L15.9143 6.27947L15.9145 6.27907C15.9146 6.27892 15.9147 6.27878 15.4997 6.00001ZM15.4997 6.00001L15.9147 6.27878C16.028 6.11018 16.028 5.88984 15.9147 5.72125L15.4997 6.00001Z" fill="#BCBCBC"/></svg>
+{%- endcapture -%}
+{%- capture icon_eye_on -%}
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.47797 6.46878C1.32866 6.28427 1.20679 6.12516 1.11507 6.00178C1.20679 5.8784 1.32866 5.71929 1.47797 5.53478C1.84649 5.07938 2.379 4.4732 3.03514 3.86859C4.36531 2.64287 6.12071 1.5 7.99871 1.5C9.87672 1.5 11.6321 2.64287 12.9623 3.86859C13.6184 4.4732 14.1509 5.07938 14.5195 5.53478C14.6688 5.71929 14.7906 5.8784 14.8824 6.00178C14.7906 6.12516 14.6688 6.28427 14.5195 6.46878C14.1509 6.92419 13.6184 7.53036 12.9623 8.13498C11.6321 9.36069 9.87672 10.5036 7.99871 10.5036C6.12071 10.5036 4.36531 9.36069 3.03514 8.13498C2.379 7.53036 1.84649 6.92419 1.47797 6.46878ZM15.9124 5.72284C15.9125 5.72299 15.9126 5.72312 15.4974 6.00178C15.9126 6.28044 15.9125 6.28057 15.9124 6.28073L15.9121 6.28113L15.9113 6.28228L15.9089 6.28594L15.9003 6.29857C15.8929 6.30933 15.8823 6.32469 15.8686 6.34436C15.8411 6.38369 15.801 6.44026 15.7489 6.5116C15.6447 6.65424 15.4923 6.85624 15.2968 7.09784C14.9064 7.58027 14.3408 8.22454 13.6399 8.87037C12.2561 10.1455 10.2621 11.5036 7.99871 11.5036C5.7353 11.5036 3.74134 10.1455 2.3575 8.87037C1.65664 8.22454 1.091 7.58027 0.700605 7.09784C0.5051 6.85624 0.35275 6.65424 0.248573 6.5116C0.196466 6.44026 0.156356 6.38369 0.128872 6.34436C0.115128 6.32469 0.104535 6.30933 0.0971734 6.29857L0.088561 6.28594L0.0860889 6.28228L0.0853145 6.28113L0.0850431 6.28073C0.0849397 6.28057 0.0848491 6.28044 0.5 6.00178C0.0848491 5.72312 0.0849397 5.72299 0.0850431 5.72284L0.0853145 5.72243L0.0860889 5.72128L0.088561 5.71763L0.0971734 5.70499C0.104535 5.69423 0.115128 5.67887 0.128872 5.6592C0.156356 5.61987 0.196466 5.5633 0.248573 5.49196C0.35275 5.34932 0.5051 5.14732 0.700605 4.90573C1.091 4.4233 1.65664 3.77902 2.3575 3.1332C3.74134 1.85802 5.7353 0.5 7.99871 0.5C10.2621 0.5 12.2561 1.85802 13.6399 3.1332C14.3408 3.77902 14.9064 4.4233 15.2968 4.90573C15.4923 5.14732 15.6447 5.34932 15.7489 5.49196C15.801 5.5633 15.8411 5.61987 15.8686 5.6592C15.8823 5.67887 15.8929 5.69423 15.9003 5.70499L15.9089 5.71763L15.9113 5.72128L15.9121 5.72243L15.9124 5.72284ZM15.4974 6.00178L15.9126 5.72312C16.0257 5.89167 16.0257 6.11189 15.9126 6.28044L15.4974 6.00178ZM0.0848491 5.72312L0.5 6.00178L0.0848491 6.28044C-0.028283 6.11189 -0.028283 5.89167 0.0848491 5.72312ZM5.6875 6.04639C5.6875 4.76648 6.78354 3.68823 8.18699 3.68823C9.59043 3.68823 10.6865 4.76648 10.6865 6.04639C10.6865 7.32631 9.59043 8.40456 8.18699 8.40456C6.78354 8.40456 5.6875 7.32631 5.6875 6.04639ZM8.18699 2.68823C6.27729 2.68823 4.6875 4.16927 4.6875 6.04639C4.6875 7.92352 6.27729 9.40456 8.18699 9.40456C10.0967 9.40456 11.6865 7.92352 11.6865 6.04639C11.6865 4.16927 10.0967 2.68823 8.18699 2.68823Z" fill="#BCBCBC"/></svg>
+{%- endcapture -%}
+{%- capture icon_google -%}
+<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4"/><path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853"/><path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957273C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957273 13.0418L3.96409 10.71Z" fill="#FBBC05"/><path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335"/></svg>
+{%- endcapture -%}
+{%- capture icon_facebook -%}
+<svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M21.5 11.0625C21.5 5.26406 16.7984 0.5625 11 0.5625C5.20156 0.5625 0.5 5.26406 0.5 11.0625C0.5 16.3031 4.33906 20.647 9.35938 21.4355V14.0986H6.69266V11.0625H9.35938V8.74922C9.35938 6.11812 10.9273 4.66359 13.3255 4.66359C14.4744 4.66359 15.6763 4.86891 15.6763 4.86891V7.45312H14.3516C13.048 7.45312 12.6402 8.26219 12.6402 9.09375V11.0625H15.552L15.087 14.0986H12.6406V21.4364C17.6609 20.6484 21.5 16.3045 21.5 11.0625Z" fill="#1877F2"/></svg>
+{%- endcapture -%}
+
+<div
+  id="modal-mso-new-signup"
+  class="mso-signup"
+  style="display: none;"
+  data-lang="{{ language }}"
+  data-processing="{{ btn_processing }}"
+>
+  <div class="mso-signup__inner">
+    <div class="mso-signup__tabs">
+      <button type="button" class="mso-signup__tab mso-signup__tab--active" data-tab="login">{{ tab_login }}</button>
+      <button type="button" class="mso-signup__tab" data-tab="register">{{ tab_register }}</button>
+    </div>
+
+    <div class="mso-signup__body">
+      <div class="mso-signup__panel mso-signup__panel--login is-active" data-panel="login">
+        {% comment %} <p class="mso-signup__intro">{{ login_note }}</p> {% endcomment %}
+        <form id="mso-form-login" class="mso-signup__form" novalidate>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-login-email">{{ label_email }}</label>
+            <input
+              id="mso-login-email"
+              class="mso-signup__input"
+              type="email"
+              name="email"
+              placeholder="{{ placeholder_email }}"
+              autocomplete="email"
+            />
+            <span class="mso-signup__error" data-error-for="email"></span>
+          </div>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-login-password">{{ label_password }}</label>
+            <div class="mso-signup__password">
+              <input
+                id="mso-login-password"
+                class="mso-signup__input"
+                type="password"
+                name="password"
+                placeholder="{{ placeholder_password }}"
+                autocomplete="current-password"
+              />
+              <span class="mso-signup__eye" role="button" tabindex="0" aria-label="Toggle password">
+                {{ icon_eye_off }}
+                {{ icon_eye_on }}
+              </span>
+            </div>
+            <span class="mso-signup__error" data-error-for="password"></span>
+          </div>
+          <div class="mso-signup__actions">
+            <div class="mso-signup__status"></div>
+            <button type="submit" class="mso-signup__submit" data-default-text="{{ btn_login }}">
+              {{ btn_login }}
+            </button>
+            <a href="javascript:void(0);" class="mso-signup__forgot-link">{{ link_forgot }}</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="mso-signup__panel mso-signup__panel--register" data-panel="register">
+        {% comment %} <div class="mso-signup__benefits">{{ register_benefits }}</div> {% endcomment %}
+        <form id="mso-form-register" class="mso-signup__form" novalidate>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-register-lastname">{{ label_last_name }}</label>
+            <input
+              id="mso-register-lastname"
+              class="mso-signup__input"
+              type="text"
+              name="last_name"
+              placeholder="{{ placeholder_last_name }}"
+              autocomplete="family-name"
+            />
+            <span class="mso-signup__error" data-error-for="last_name"></span>
+          </div>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-register-firstname">{{ label_first_name }}</label>
+            <input
+              id="mso-register-firstname"
+              class="mso-signup__input"
+              type="text"
+              name="first_name"
+              placeholder="{{ placeholder_first_name }}"
+              autocomplete="given-name"
+            />
+            <span class="mso-signup__error" data-error-for="first_name"></span>
+          </div>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-register-email">{{ label_email }}</label>
+            <input
+              id="mso-register-email"
+              class="mso-signup__input"
+              type="email"
+              name="email"
+              placeholder="{{ placeholder_email }}"
+              autocomplete="email"
+            />
+            <span class="mso-signup__error" data-error-for="email"></span>
+          </div>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-register-password">{{ label_password }}</label>
+            <div class="mso-signup__password">
+              <input
+                id="mso-register-password"
+                class="mso-signup__input"
+                type="password"
+                name="password"
+                placeholder="{{ placeholder_password }}"
+                autocomplete="new-password"
+              />
+              <span class="mso-signup__eye" role="button" tabindex="0" aria-label="Toggle password">
+                {{ icon_eye_off }}
+                {{ icon_eye_on }}
+              </span>
+            </div>
+            <span class="mso-signup__error" data-error-for="password"></span>
+            <p class="mso-signup__hint">{{ password_hint }}</p>
+          </div>
+          <p class="mso-signup__terms">{{ terms_text }}</p>
+          <div class="mso-signup__actions">
+            <div class="mso-signup__status"></div>
+            <button type="submit" class="mso-signup__submit" data-default-text="{{ btn_register }}">
+              {{ btn_register }}
+            </button>
+            <a href="javascript:void(0);" class="mso-signup__forgot-link">{{ link_forgot }}</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="mso-signup__panel mso-signup__panel--forgot" data-panel="forgot">
+        <p class="mso-signup__intro">{{ forgot_note }}</p>
+        <form id="mso-form-forgot" class="mso-signup__form" novalidate>
+          <div class="mso-signup__field">
+            <label class="mso-signup__label" for="mso-forgot-email">{{ label_email }}</label>
+            <input
+              id="mso-forgot-email"
+              class="mso-signup__input"
+              type="email"
+              name="email"
+              placeholder="{{ placeholder_email }}"
+              autocomplete="email"
+            />
+            <span class="mso-signup__error" data-error-for="email"></span>
+          </div>
+          <div class="mso-signup__actions">
+            <div class="mso-signup__status"></div>
+            <button type="submit" class="mso-signup__submit" data-default-text="{{ btn_forgot }}">
+              {{ btn_forgot }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="mso-signup__divider"></div>
+
+    <div class="mso-signup__social">
+      <button type="button" class="mso-signup__social-btn mso-signup__social-btn--google" id="btn-google-login">
+        <span class="mso-signup__social-icon">{{ icon_google }}</span>
+        <span>{{ social_google }}</span>
+      </button>
+      <button type="button" class="mso-signup__social-btn mso-signup__social-btn--facebook" id="btn-facebook-login">
+        <span class="mso-signup__social-icon">{{ icon_facebook }}</span>
+        <span>{{ social_facebook }}</span>
+      </button>
+    </div>
+  </div>
+</div>
