@@ -1,4 +1,4 @@
-var MLPRO = {}
+﻿var MLPRO = {}
 window.accountJS = {};
 window.cartJS = {};
 window.checkoutsJS = {};
@@ -2374,12 +2374,661 @@ MLPRO.MiniCart = {
     });
   }
 }
-MLPRO.Init = function(){
+MLPRO.Collection = {
+  init: function () {
+    this.filter.init();
+  },
+  filter: {
+    isFilter: false,
+    limit: 20,
+    brand: [],
+    type: [],
+    priceMin: null,
+    priceMax: null,
+    priceBoundMin: 0,
+    priceBoundMax: 1000000,
+    filterPriced: false,
+    currentPage: 1,
+    sort: '',
+    dataColl: typeof varibleCollection !== 'undefined' ? varibleCollection : {},
+    priceTimer: null,
+
+    init: function () {
+      var self = this;
+      if (self.dataColl && self.dataColl.limit) {
+        self.limit = parseInt(self.dataColl.limit, 10) || self.limit;
+      }
+      self.initPriceBounds();
+      self.sliderRange();
+      self.bindDropdowns();
+      self.bindActions();
+      if (!self.isMobileFilter()) {
+        $('.collection-sidebar').attr('aria-hidden', 'false');
+      }
+      self.checkUrl();
+    },
+
+    parseArgs: function () {
+      if (typeof Arg !== 'undefined' && Arg.parse) {
+        return Arg.parse(window.location.href) || {};
+      }
+      var params = {};
+      var search = window.location.search.replace(/^\?/, '');
+      if (!search) return params;
+      search.split('&').forEach(function (pair) {
+        if (!pair) return;
+        var parts = pair.split('=');
+        var key = decodeURIComponent(parts[0] || '');
+        var val = decodeURIComponent((parts[1] || '').replace(/\+/g, ' '));
+        if (key) params[key] = val;
+      });
+      return params;
+    },
+
+    buildUrl: function (params) {
+      if (typeof Arg !== 'undefined' && Arg.url) {
+        return Arg.url(params);
+      }
+      var base = window.location.origin + window.location.pathname;
+      var qs = Object.keys(params)
+        .filter(function (key) {
+          return params[key] !== '' && params[key] != null;
+        })
+        .map(function (key) {
+          return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+        })
+        .join('&');
+      return qs ? base + '?' + qs : base;
+    },
+
+    initPriceBounds: function () {
+      var self = this;
+      var $slider = $('#slider-range');
+      var $page = $('.collection-page');
+      var fromSliderMin = parseInt($slider.attr('data-min'), 10);
+      var fromSliderMax = parseInt($slider.attr('data-max'), 10);
+      var fromDataMin = parseInt($page.attr('data-price-min'), 10);
+      var fromDataMax = parseInt($page.attr('data-price-max'), 10);
+      var fromSettingMin = typeof filterPrice !== 'undefined' ? parseInt(filterPrice.min, 10) : NaN;
+      var fromSettingMax = typeof filterPrice !== 'undefined' ? parseInt(filterPrice.max, 10) : NaN;
+
+      self.priceBoundMin = !isNaN(fromSliderMin)
+        ? fromSliderMin
+        : !isNaN(fromDataMin)
+          ? fromDataMin
+          : !isNaN(fromSettingMin)
+            ? fromSettingMin
+            : 0;
+      self.priceBoundMax = !isNaN(fromSliderMax) && fromSliderMax > 0
+        ? fromSliderMax
+        : !isNaN(fromDataMax) && fromDataMax > 0
+          ? fromDataMax
+          : !isNaN(fromSettingMax) && fromSettingMax > 0
+            ? fromSettingMax
+            : 1000000;
+
+      if (self.priceBoundMax <= self.priceBoundMin) {
+        self.priceBoundMax = self.priceBoundMin + 1000;
+      }
+
+      self.priceMin = self.priceBoundMin;
+      self.priceMax = self.priceBoundMax;
+
+      if (typeof filterPrice !== 'undefined') {
+        filterPrice.min = self.priceBoundMin;
+        filterPrice.max = self.priceBoundMax;
+      }
+    },
+
+    sliderRange: function () {
+      var self = this;
+      var $slider = $('#slider-range');
+      if (!$slider.length || typeof $.fn.slider !== 'function') {
+        console.warn('jQuery UI slider is not available');
+        return;
+      }
+
+      $slider.slider({
+        range: true,
+        min: self.priceBoundMin,
+        max: self.priceBoundMax,
+        values: [self.priceBoundMin, self.priceBoundMax],
+        step: 1000,
+        slide: function (event, ui) {
+          self.updatePriceDisplay(ui.values[0], ui.values[1]);
+        },
+        stop: function (event, ui) {
+          self.updatePriceDisplay(ui.values[0], ui.values[1]);
+          if (!self.filterPriced) {
+            self.filterPriced = true;
+          }
+          clearTimeout(self.priceTimer);
+          self.priceTimer = setTimeout(function () {
+            self.buildParam(true);
+          }, 150);
+        },
+      });
+
+      var firstPrice = $slider.slider('values', 0);
+      var firstPrice2 = $slider.slider('values', 1);
+      self.updatePriceDisplay(firstPrice, firstPrice2);
+    },
+
+    updatePriceDisplay: function (minVal, maxVal) {
+      var self = this;
+      minVal = parseInt(minVal, 10);
+      maxVal = parseInt(maxVal, 10);
+      if (isNaN(minVal)) minVal = self.priceBoundMin;
+      if (isNaN(maxVal)) maxVal = self.priceBoundMax;
+
+      self.priceMin = minVal;
+      self.priceMax = maxVal;
+
+      var minPrice = Haravan.formatMoney(minVal * 100, shop.moneyFormat);
+      var maxPrice = Haravan.formatMoney(maxVal * 100, shop.moneyFormat);
+
+      $('#priceMin').val(minPrice);
+      $('#priceMax').val(maxPrice);
+      $('.text-show-price-l').html(minPrice).attr('data-price', minVal);
+      $('.text-show-price-r').html(maxPrice).attr('data-price', maxVal);
+      $('input[name="price"]').val(minVal + '_' + maxVal);
+    },
+
+    setPriceUI: function (minVal, maxVal, resetFlag) {
+      var self = this;
+      minVal = parseInt(minVal, 10);
+      maxVal = parseInt(maxVal, 10);
+      if (isNaN(minVal)) minVal = self.priceBoundMin;
+      if (isNaN(maxVal)) maxVal = self.priceBoundMax;
+      minVal = Math.max(self.priceBoundMin, Math.min(minVal, self.priceBoundMax));
+      maxVal = Math.max(self.priceBoundMin, Math.min(maxVal, self.priceBoundMax));
+      if (minVal > maxVal) minVal = maxVal;
+
+      var $slider = $('#slider-range');
+      if ($slider.length && typeof $.fn.slider === 'function' && $slider.hasClass('ui-slider')) {
+        $slider.slider('values', [minVal, maxVal]);
+      }
+
+      self.updatePriceDisplay(minVal, maxVal);
+
+      if (resetFlag) {
+        self.filterPriced = false;
+      } else if (minVal > self.priceBoundMin || maxVal < self.priceBoundMax) {
+        self.filterPriced = true;
+      }
+    },
+
+    isPriceFiltered: function () {
+      return this.filterPriced && (this.priceMin > this.priceBoundMin || this.priceMax < this.priceBoundMax);
+    },
+
+    isMobileFilter: function () {
+      return window.matchMedia('(max-width: 991px)').matches;
+    },
+
+    closeDesktopDropdowns: function () {
+      $('.collection-filter').removeClass('is-open');
+      $('.collection-filter > .collection-filter__trigger').attr('aria-expanded', 'false');
+    },
+
+    openSidebar: function () {
+      var self = this;
+      if (!self.isMobileFilter()) return;
+
+      $('body').addClass('open-collection-filter');
+      $('.collection-sidebar').attr('aria-hidden', 'false');
+      $('[data-open-collection-filter]').attr('aria-expanded', 'true');
+
+      // Mobile accordion: mở sẵn các nhóm
+      $('.collection-filter').addClass('is-open');
+      $('.collection-filter > .collection-filter__trigger').attr('aria-expanded', 'true');
+
+      var $slider = $('#slider-range');
+      if ($slider.length && typeof $.fn.slider === 'function' && $slider.hasClass('ui-slider')) {
+        requestAnimationFrame(function () {
+          var values = $slider.slider('values');
+          $slider.slider('option', 'values', values);
+          self.updatePriceDisplay(values[0], values[1]);
+        });
+      }
+    },
+
+    closeSidebar: function () {
+      var self = this;
+      var $sidebar = $('.collection-sidebar');
+      var $panel = $sidebar.find('.collection-sidebar__panel');
+
+      $('body').removeClass('open-collection-filter');
+      $('[data-open-collection-filter]').attr('aria-expanded', 'false');
+
+      var finishClose = function () {
+        $sidebar.attr('aria-hidden', 'true');
+        if (self.isMobileFilter()) {
+          self.closeDesktopDropdowns();
+        }
+      };
+
+      // Đợi panel slide-out xong rồi mới collapse accordion
+      if (self.isMobileFilter() && $panel.length) {
+        var done = false;
+        var onEnd = function (e) {
+          if (done) return;
+          if (e && e.target !== $panel[0]) return;
+          if (e && e.originalEvent && e.originalEvent.propertyName !== 'transform') return;
+          done = true;
+          $panel.off('transitionend', onEnd);
+          finishClose();
+        };
+        $panel.on('transitionend', onEnd);
+        setTimeout(onEnd, 350);
+      } else {
+        finishClose();
+      }
+    },
+
+    syncClearButton: function () {
+      var $btn = $('.collection-sidebar__clear');
+      if (!$btn.length) return;
+      if (this.isFilter) {
+        $btn.removeClass('d-none');
+      } else {
+        $btn.addClass('d-none');
+      }
+    },
+
+    bindDropdowns: function () {
+      var self = this;
+
+      $(document).on('click', '[data-open-collection-filter]', function (e) {
+        e.preventDefault();
+        self.openSidebar();
+      });
+
+      $(document).on('click', '[data-close-collection-filter]', function (e) {
+        e.preventDefault();
+        self.closeSidebar();
+      });
+
+      $(document).on('click', '[data-apply-collection-filter]', function (e) {
+        e.preventDefault();
+        self.buildParam(true);
+        self.closeSidebar();
+      });
+
+      $(document).on('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if ($('body').hasClass('open-collection-filter')) {
+            self.closeSidebar();
+          } else {
+            self.closeDesktopDropdowns();
+          }
+        }
+      });
+
+      $(document).on('click', '.collection-sidebar__body .collection-filter > .collection-filter__trigger', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $filter = $(this).closest('.collection-filter');
+        var isOpen = $filter.hasClass('is-open');
+
+        if (self.isMobileFilter()) {
+          $filter.toggleClass('is-open', !isOpen);
+          $(this).attr('aria-expanded', isOpen ? 'false' : 'true');
+          return;
+        }
+
+        // Desktop: chỉ mở 1 dropdown
+        $('.collection-filter').not($filter).removeClass('is-open');
+        $('.collection-filter').not($filter).find('> .collection-filter__trigger').attr('aria-expanded', 'false');
+        $filter.toggleClass('is-open', !isOpen);
+        $(this).attr('aria-expanded', isOpen ? 'false' : 'true');
+
+        if ($filter.hasClass('collection-filter--price') && $filter.hasClass('is-open')) {
+          var $slider = $('#slider-range');
+          if ($slider.length && typeof $.fn.slider === 'function' && $slider.hasClass('ui-slider')) {
+            requestAnimationFrame(function () {
+              var values = $slider.slider('values');
+              $slider.slider('option', 'values', values);
+              self.updatePriceDisplay(values[0], values[1]);
+            });
+          }
+        }
+      });
+
+      $(document).on('click', '.collection-filter__dropdown', function (e) {
+        e.stopPropagation();
+      });
+
+      $(document).on('click', function () {
+        if (!self.isMobileFilter()) {
+          self.closeDesktopDropdowns();
+        }
+      });
+    },
+
+    bindActions: function () {
+      var self = this;
+
+      $(document).on('change', '.collection-filter input[name="brand"], .collection-filter input[name="type"]', function () {
+        self.buildParam(true);
+      });
+
+      $(document).on('click', '.sort-by-content li', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = $(this);
+        $('.sort-by-content').addClass('sorted');
+        $('.sort-by-content li').removeClass('active');
+        $li.addClass('active');
+        var title = $li.find('span').text();
+        $('.show-sort').text(title);
+        if (!self.isMobileFilter()) {
+          self.closeDesktopDropdowns();
+        }
+        self.buildParam(true);
+      });
+
+      $(document).on('click', '.pagi-ajax .prev-pagi:not(.disabled), .pagi-ajax .next-pagi:not(.disabled), .pagi-ajax .pagiItem span:not(.active):not(.disabled):not(.span-non)', function (e) {
+        e.preventDefault();
+        var page = $(this).attr('data-page');
+        if (!page) return;
+        var url = self.parseArgs();
+        url.page = page;
+        window.location = self.buildUrl(url);
+      });
+
+      $(document).on('click', '.clear-all, .back-normal, [data-clear-collection-filter]', function (e) {
+        e.preventDefault();
+        $('input[name="brand"], input[name="type"]').prop('checked', false);
+        $('.sort-by-content').removeClass('sorted');
+        $('.sort-by-content li').removeClass('active').first().addClass('active');
+        $('.show-sort').text('Mặc định');
+        self.setPriceUI(self.priceBoundMin, self.priceBoundMax, true);
+        self.buildParam(true);
+      });
+    },
+
+    reFillSort: function (value) {
+      var $el = $('.sort-by-content span[data-value="' + value + '"]');
+      if (!$el.length) return;
+      $('.sort-by-content').addClass('sorted');
+      $('.sort-by-content li').removeClass('active');
+      $el.parent().addClass('active');
+      $('.show-sort').text($el.text());
+    },
+
+    checkDefaultSort: function () {
+      var value = this.dataColl.defaultSortBy;
+      if (!value || value === 'manual') return;
+      this.reFillSort(value);
+    },
+
+    checkUrl: function () {
+      var self = this;
+      var params = self.parseArgs();
+      var $collection = self.dataColl;
+
+      self.brand = [];
+      self.type = [];
+      self.sort = '';
+      self.currentPage = params.page ? parseInt(params.page, 10) || 1 : 1;
+      self.setPriceUI(self.priceBoundMin, self.priceBoundMax, true);
+      $('input[name="brand"], input[name="type"]').prop('checked', false);
+
+      if (params.brand) {
+        self.brand = params.brand.indexOf(',') > -1 ? params.brand.split(',') : [params.brand];
+        self.brand.forEach(function (item) {
+          $('input[name="brand"][value="' + item.replace(/"/g, '\\"') + '"]').prop('checked', true);
+        });
+      }
+      if (params.type) {
+        self.type = params.type.indexOf(',') > -1 ? params.type.split(',') : [params.type];
+        self.type.forEach(function (item) {
+          $('input[name="type"][value="' + item.replace(/"/g, '\\"') + '"]').prop('checked', true);
+        });
+      }
+      if (params.price) {
+        var parts = String(params.price).split('_');
+        var minVal = parseInt(parts[0], 10);
+        var maxVal = parseInt(parts[1], 10);
+        if (!isNaN(minVal) && !isNaN(maxVal)) {
+          self.setPriceUI(minVal, maxVal, false);
+        }
+      }
+      if (params.sort) {
+        self.sort = params.sort;
+        self.reFillSort(params.sort);
+      } else {
+        self.checkDefaultSort();
+      }
+
+      self.isFilter = self.brand.length > 0 || self.type.length > 0 || self.isPriceFiltered() || !!self.sort;
+      self.syncClearButton();
+
+      if (self.isFilter) {
+        self.filterRender();
+      } else {
+        self.normalRender($collection.handle, self.currentPage);
+      }
+    },
+
+    buildParam: function (resetPage) {
+      var self = this;
+      var brand = [];
+      var type = [];
+      var sort = $('.sort-by-content li.active span').attr('data-value') || '';
+
+      if (!$('.sort-by-content').hasClass('sorted') || sort === 'manual') {
+        sort = '';
+      }
+
+      $('input[name="brand"]:checked').each(function () {
+        brand.push($(this).val());
+      });
+      $('input[name="type"]:checked').each(function () {
+        type.push($(this).val());
+      });
+
+      var params = self.parseArgs();
+      params.brand = brand.length ? brand.join(',') : '';
+      params.type = type.length ? type.join(',') : '';
+      params.price = self.isPriceFiltered() ? self.priceMin + '_' + self.priceMax : '';
+      params.sort = sort;
+      if (resetPage) {
+        params.page = '';
+        self.currentPage = 1;
+      }
+
+      window.history.replaceState('', '', self.buildUrl(params));
+      self.checkUrl();
+    },
+
+    query: function () {
+      var self = this;
+      var $collection = self.dataColl;
+      var cid = parseInt($collection.id, 10) || 0;
+      var q = cid !== 0 ? '((collectionid:product=' + cid + '))' : '((collectionid:product>0))';
+
+      if (self.brand.length > 0) {
+        var brandQuery = self.brand
+          .map(function (item) {
+            return '(vendor:product=' + item + ')';
+          })
+          .join('||');
+        q += '&&(' + brandQuery + ')';
+      }
+
+      if (self.type.length > 0) {
+        var typeQuery = self.type
+          .map(function (item) {
+            return '(product_type:product=' + item + ')';
+          })
+          .join('||');
+        q += '&&(' + typeQuery + ')';
+      }
+
+      if (self.isPriceFiltered()) {
+        q += '&&((price_variant:product range ' + self.priceMin + '_' + self.priceMax + '))';
+      }
+
+      q += '&&((tag:product<>gift))&&((available:product=true))';
+      return '(' + q + ')';
+    },
+
+    countResultItem: function (total) {
+      $('.results-count strong').html(total);
+    },
+
+    afterRender: function () {
+      if (MLPRO.LoopItem && typeof MLPRO.LoopItem.productLoopSwiper === 'function') {
+        MLPRO.LoopItem.productLoopSwiper();
+      }
+    },
+
+    emptyMessage: function () {
+      return "<div class='text-center no-product'><p>Không tìm thấy sản phẩm phù hợp</p><div class='clear-all back-normal'><span>Xóa bộ lọc</span></div></div>";
+    },
+
+    filterRender: function (isPage) {
+      var self = this;
+      var query = self.query();
+      var sort = $('.sort-by-content li.active span').attr('data-filter') || '';
+      var page = isPage != null ? isPage : self.currentPage;
+      var limit = self.limit;
+
+      $.ajax({
+        type: 'POST',
+        url: '/search.js',
+        data: {
+          q: 'filter=' + query,
+          type: 'product',
+          include: 'metafields[product,hrvmultilang_en]',
+          page: page,
+          limit: limit,
+          sortby: sort,
+        },
+        success: function (response) {
+          if (response.total > 0) {
+            var items = MLPRO.LoopItem.loopHtml(response, '', '');
+            $('.render-product').html(items).removeClass('empty-product');
+            self.countResultItem(response.total);
+            self.buildPaginate(response.total, limit);
+            self.afterRender();
+          } else {
+            $('.render-product').html(self.emptyMessage()).addClass('empty-product');
+            self.countResultItem(0);
+            $('.pagi-ajax').html('').addClass('d-none');
+          }
+        },
+      });
+    },
+
+    normalRender: function (handle, page) {
+      var self = this;
+      var limit = self.limit;
+      var $collection = self.dataColl;
+      var sortValue = $('.sort-by-content li.active span').attr('data-value') || '';
+
+      if (sortValue && sortValue !== 'manual') {
+        MLPRO.LoopItem.collectionJS3(handle, page, limit, sortValue, function (response) {
+          self.handleNormalResponse(response, $collection, limit);
+        });
+        return;
+      }
+
+      MLPRO.LoopItem.collectionJS2(handle, page, limit, function (response) {
+        self.handleNormalResponse(response, $collection, limit);
+      });
+    },
+
+    handleNormalResponse: function (response, $collection, limit) {
+      var self = this;
+      if (response.products && response.products.length > 0) {
+        var items = MLPRO.LoopItem.loopHtml(response, true, '');
+        $('.render-product').html(items).removeClass('empty-product');
+        var total = parseInt($collection.totalProduct, 10) || response.products.length;
+        self.countResultItem(total);
+        self.buildPaginate(total, limit);
+        self.afterRender();
+      } else {
+        $('.render-product')
+          .html("<div class='text-center no-product'><p>Không có sản phẩm nào</p></div>")
+          .addClass('empty-product');
+        self.countResultItem(0);
+        $('.pagi-ajax').html('').addClass('d-none');
+      }
+    },
+
+    buildPaginate: function (number, limit) {
+      var self = this;
+      limit = parseInt(limit, 10);
+      var totalPages = Math.ceil(number / limit);
+      var currentPage = self.currentPage || 1;
+      if (currentPage > totalPages) currentPage = 1;
+
+      if (totalPages > 1) {
+        var html = '<div class="pagination-custom-ajax">';
+        html += '<span class="titlePagi">Trang ' + currentPage + ' / ' + totalPages + '</span>';
+        html += self.pagination(currentPage, totalPages, 'pagi-item', 'disabled');
+        html += '</div>';
+        $('.pagi-ajax').html(html).removeClass('d-none');
+      } else {
+        $('.pagi-ajax').html('').addClass('d-none');
+      }
+    },
+
+    pagination: function (pageNumber, pageTotal, className, disableClassName) {
+      var html = '';
+      var htmlPrev = '<svg width="9" height="16" viewBox="0 0 9 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.5L0.5 8L8 15.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var htmlNext = '<svg width="9" height="16" viewBox="0 0 9 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 0.5L8.5 8L1 15.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var windowSize = $(window).width() < 991 ? 1 : 2;
+
+      if (+pageNumber > 1) {
+        html += '<div class="' + className + '"><span class="prev-pagi" data-page="' + (+pageNumber - 1) + '">' + htmlPrev + '</span></div>';
+      } else {
+        html += '<div class="' + className + ' ' + disableClassName + '"><span class="prev-pagi ' + disableClassName + '" data-page="1">' + htmlPrev + '</span></div>';
+      }
+
+      if (+pageNumber - windowSize > 1) {
+        html += '<div class="' + className + ' pagiItem"><span data-page="1">1</span></div>';
+        html += '<div class="' + className + ' ' + disableClassName + '"><span class="span-non">...</span></div>';
+      }
+
+      for (var i = +pageNumber - windowSize; i <= +pageNumber + windowSize; i++) {
+        if (i < 1 || i > pageTotal) continue;
+        if (+pageNumber === i) {
+          html += '<div class="' + className + ' pagiItem"><span class="active" data-page="' + i + '">' + i + '</span></div>';
+        } else {
+          html += '<div class="' + className + ' pagiItem"><span data-page="' + i + '">' + i + '</span></div>';
+        }
+      }
+
+      if (+pageNumber + windowSize < pageTotal) {
+        html += '<div class="' + className + ' ' + disableClassName + '"><span class="span-non">...</span></div>';
+        html += '<div class="' + className + ' pagiItem"><span data-page="' + pageTotal + '">' + pageTotal + '</span></div>';
+      }
+
+      if (+pageNumber < pageTotal) {
+        html += '<div class="' + className + '"><span class="next-pagi" data-page="' + (+pageNumber + 1) + '">' + htmlNext + '</span></div>';
+      } else {
+        html += '<div class="' + className + ' ' + disableClassName + '"><span class="next-pagi ' + disableClassName + '" data-page="' + pageTotal + '">' + htmlNext + '</span></div>';
+      }
+
+      return html;
+    },
+  },
+};
+
+MLPRO.Init = function () {
   MLPRO.Global.init();
-  if(shop.template.indexOf('index') != -1){
+  if (shop.template.indexOf('index') != -1) {
     MLPRO.Index.init();
   }
-}
-$(document).ready(function(){
-	MLPRO.Init();
+  if (shop.template.indexOf('collection') != -1) {
+    MLPRO.Collection.init();
+  }
+};
+
+$(document).ready(function () {
+  MLPRO.Init();
 });

@@ -1,5 +1,5 @@
 <div class="site-header-holder">
-  <div class="site-header-sticky{% if template == 'index' %} site-header-sticky--overlay{% endif %}">
+  <div class="site-header-sticky{% if template == 'index' or template == 'collection' %} site-header-sticky--overlay{% endif %}">
     {%- if settings.display_topbar -%}
       <div
         class="site-header__topbar"
@@ -27,7 +27,7 @@
     <header
       class="
         site-header
-        {%- if template == 'index' %} site-header--overlay{% endif %}
+        {%- if template == 'index' or template == 'collection' %} site-header--overlay{% endif %}
       "
     >
       {%- assign main_menu = linklists[settings.main_menu] -%}
