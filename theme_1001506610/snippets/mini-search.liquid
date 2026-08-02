@@ -1,0 +1,123 @@
+{%- assign current_language = cart.attributes.language | default: 'vi' -%}
+{%- if current_language == 'en' -%}
+  {%- assign ms_placeholder = 'Search' -%}
+  {%- assign ms_clear = 'Clear' -%}
+  {%- assign ms_products = 'Products' -%}
+  {%- assign ms_collections = 'Collections' -%}
+  {%- assign ms_blogs = 'Blog' -%}
+  {%- assign ms_view_all = 'View all' -%}
+  {%- assign ms_close = 'Close' -%}
+  {%- assign ms_products_label = 'products' -%}
+  {%- assign ms_suggest = 'Suggested collections' -%}
+  {%- assign ms_no_result = 'No results found' -%}
+{%- else -%}
+  {%- assign ms_placeholder = 'Tìm kiếm' -%}
+  {%- assign ms_clear = 'Xóa' -%}
+  {%- assign ms_products = 'Sản phẩm' -%}
+  {%- assign ms_collections = 'Nhóm sản phẩm' -%}
+  {%- assign ms_blogs = 'Bài viết' -%}
+  {%- assign ms_view_all = 'Xem tất cả' -%}
+  {%- assign ms_close = 'Đóng' -%}
+  {%- assign ms_products_label = 'sản phẩm' -%}
+  {%- assign ms_suggest = settings.mini_search_suggest_title -%}
+  {%- assign ms_no_result = 'Không tìm thấy kết quả' -%}
+{%- endif -%}
+
+{%- comment -%} TODO: đổi sang settings.mini_search_collection khi bổ sung settings {%- endcomment -%}
+{%- assign ms_suggest_collection = settings.mini_search_collection -%}
+
+<div
+  id="mini-search"
+  class="mini-search"
+  style="display: none;"
+  aria-hidden="true"
+  data-suggest-collection="{{ ms_suggest_collection | escape }}"
+  data-label-products="{{ ms_products | escape }}"
+  data-label-collections="{{ ms_collections | escape }}"
+  data-label-blogs="{{ ms_blogs | escape }}"
+  data-label-suggest="{{ ms_suggest | escape }}"
+  data-label-products-count="{{ ms_products_label | escape }}"
+  data-label-no-result="{{ ms_no_result | escape }}"
+  data-label-view-all="{{ ms_view_all | escape }}"
+>
+  <div class="mini-search__inner">
+    <div class="mini-search__header">
+      <form class="mini-search__form" action="/search" method="get" autocomplete="off">
+        <span class="mini-search__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input
+          type="text"
+          name="q"
+          class="mini-search__input"
+          placeholder="{{ ms_placeholder }}"
+          aria-label="{{ ms_placeholder }}"
+        >
+        <button type="button" class="mini-search__clear" hidden>{{ ms_clear }}</button>
+      </form>
+      <button type="button" class="mini-search__close" data-fancybox-close aria-label="{{ ms_close }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mini-search__body">
+      <div class="mini-search__section mini-search__section--products is-hidden">
+        <div class="mini-search__section-head">
+          <h3 class="mini-search__section-title">{{ ms_products }}</h3>
+        </div>
+        <div class="mini-search__products wrap-product"></div>
+      </div>
+
+      <div class="mini-search__section mini-search__section--collections">
+        <div class="mini-search__section-head">
+          <h3 class="mini-search__section-title mini-search__collections-title">{{ ms_suggest }}</h3>
+          <div class="mini-search__nav mini-search__nav--collections">
+            <button type="button" class="mini-search__nav-btn mini-search__nav-btn--prev" aria-label="Prev">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button type="button" class="mini-search__nav-btn mini-search__nav-btn--next" aria-label="Next">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="swiper mini-search__swiper mini-search__swiper--collections">
+          <div class="swiper-wrapper wrap-collections"></div>
+        </div>
+      </div>
+
+      <div class="mini-search__section mini-search__section--blogs is-hidden">
+        <div class="mini-search__section-head">
+          <h3 class="mini-search__section-title">{{ ms_blogs }}</h3>
+          <div class="mini-search__nav mini-search__nav--blogs">
+            <button type="button" class="mini-search__nav-btn mini-search__nav-btn--prev" aria-label="Prev">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button type="button" class="mini-search__nav-btn mini-search__nav-btn--next" aria-label="Next">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="swiper mini-search__swiper mini-search__swiper--blogs">
+          <div class="swiper-wrapper wrap-blogs"></div>
+        </div>
+      </div>
+
+      <div class="mini-search__footer is-hidden">
+        <a href="/search" class="mini-search__view-all">{{ ms_view_all }}</a>
+      </div>
+    </div>
+  </div>
+</div>

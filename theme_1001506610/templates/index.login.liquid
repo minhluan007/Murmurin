@@ -1,0 +1,7 @@
+{%- layout none -%}
+{%- capture formNew -%}
+<div class="find-key-form">
+  {%- form 'customer_login' -%}{%- endform -%}
+</div>
+{%- endcapture -%}
+{{ formNew | replace: 'script', 'noscript' }}

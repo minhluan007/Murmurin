@@ -1,0 +1,148 @@
+{%- assign current_language = cart.attributes.language | default: 'vi' -%}
+{%- if current_language == 'en' -%}
+  {%- assign mc_title = 'Cart' -%}
+  {%- assign mc_empty_title = 'Your cart is empty' -%}
+  {%- assign mc_empty_text_before = 'Have an account?' -%}
+  {%- assign mc_login = 'Log in' -%}
+  {%- assign mc_empty_text_after = 'to check out faster.' -%}
+  {%- assign mc_continue = 'Continue shopping' -%}
+  {%- assign mc_discount = 'Discount' -%}
+  {%- assign mc_discount_placeholder = 'Discount code' -%}
+  {%- assign mc_apply = 'Apply' -%}
+  {%- assign mc_total = 'Estimated total' -%}
+  {%- assign mc_total_note = 'Taxes and shipping calculated at checkout.' -%}
+  {%- assign mc_checkout = 'Check out' -%}
+  {%- assign mc_close = 'Close' -%}
+  {%- assign mc_remove = 'Remove' -%}
+  {%- assign mc_decrease = 'Decrease quantity' -%}
+  {%- assign mc_increase = 'Increase quantity' -%}
+  {%- assign mc_apply_success = 'Discount code applied' -%}
+  {%- assign mc_apply_error = 'Please enter a discount code' -%}
+  {%- assign mc_apply_exists = 'This discount code is already applied' -%}
+  {%- assign mc_apply_invalid = 'Invalid discount code' -%}
+  {%- assign mc_apply_fail = 'Could not apply discount code' -%}
+  {%- assign mc_remove_code = 'Remove discount code' -%}
+{%- else -%}
+  {%- assign mc_title = 'Giỏ hàng' -%}
+  {%- assign mc_empty_title = 'Giỏ hàng trống' -%}
+  {%- assign mc_empty_text_before = 'Đã có tài khoản?' -%}
+  {%- assign mc_login = 'Đăng nhập' -%}
+  {%- assign mc_empty_text_after = 'để thanh toán nhanh hơn.' -%}
+  {%- assign mc_continue = 'Tiếp tục mua sắm' -%}
+  {%- assign mc_discount = 'Mã giảm giá' -%}
+  {%- assign mc_discount_placeholder = 'Nhập mã giảm giá' -%}
+  {%- assign mc_apply = 'Áp dụng' -%}
+  {%- assign mc_total = 'Tạm tính' -%}
+  {%- assign mc_total_note = 'Thuế và phí vận chuyển sẽ được tính khi thanh toán.' -%}
+  {%- assign mc_checkout = 'Thanh toán' -%}
+  {%- assign mc_close = 'Đóng' -%}
+  {%- assign mc_remove = 'Xóa' -%}
+  {%- assign mc_decrease = 'Giảm số lượng' -%}
+  {%- assign mc_increase = 'Tăng số lượng' -%}
+  {%- assign mc_apply_success = 'Mã khuyến mãi đã áp dụng' -%}
+  {%- assign mc_apply_error = 'Vui lòng nhập mã giảm giá' -%}
+  {%- assign mc_apply_exists = 'Mã giảm giá đã được áp dụng' -%}
+  {%- assign mc_apply_invalid = 'Mã giảm giá không hợp lệ' -%}
+  {%- assign mc_apply_fail = 'Không thể áp dụng mã giảm giá' -%}
+  {%- assign mc_remove_code = 'Xóa mã giảm giá' -%}
+{%- endif -%}
+
+<div
+  id="mini-cart"
+  class="mini-cart"
+  aria-hidden="true"
+  data-label-title="{{ mc_title | escape }}"
+  data-label-empty-title="{{ mc_empty_title | escape }}"
+  data-label-continue="{{ mc_continue | escape }}"
+  data-label-discount="{{ mc_discount | escape }}"
+  data-label-apply="{{ mc_apply | escape }}"
+  data-label-total="{{ mc_total | escape }}"
+  data-label-checkout="{{ mc_checkout | escape }}"
+  data-label-remove="{{ mc_remove | escape }}"
+  data-label-decrease="{{ mc_decrease | escape }}"
+  data-label-increase="{{ mc_increase | escape }}"
+  data-label-apply-success="{{ mc_apply_success | escape }}"
+  data-label-apply-error="{{ mc_apply_error | escape }}"
+  data-label-apply-exists="{{ mc_apply_exists | escape }}"
+  data-label-apply-invalid="{{ mc_apply_invalid | escape }}"
+  data-label-apply-fail="{{ mc_apply_fail | escape }}"
+  data-label-remove-code="{{ mc_remove_code | escape }}"
+>
+  <div class="mini-cart__overlay" data-mini-cart-close></div>
+
+  <aside class="mini-cart__drawer" role="dialog" aria-modal="true" aria-label="{{ mc_title | escape }}">
+    <div class="mini-cart__state mini-cart__state--empty is-active">
+      <button type="button" class="mini-cart__close" data-mini-cart-close aria-label="{{ mc_close }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="mini-cart__empty">
+        <h2 class="mini-cart__empty-title">{{ mc_empty_title }}</h2>
+        <p class="mini-cart__empty-text">
+          {{ mc_empty_text_before }}
+          <a href="/account/login" class="mini-cart__login-link js-open-modal-mso-new-signup">{{ mc_login }}</a>
+          {{ mc_empty_text_after }}
+        </p>
+        <button type="button" class="mini-cart__btn mini-cart__btn--primary js-mini-cart-continue">
+          {{ mc_continue }}
+        </button>
+      </div>
+    </div>
+
+    <div class="mini-cart__state mini-cart__state--filled">
+      <div class="mini-cart__header">
+        <div class="mini-cart__heading">
+          <h2 class="mini-cart__title">{{ mc_title }}</h2>
+          <span class="mini-cart__count js-mini-cart-count">0</span>
+        </div>
+        <button type="button" class="mini-cart__close" data-mini-cart-close aria-label="{{ mc_close }}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mini-cart__body">
+        <div class="mini-cart__items js-mini-cart-items"></div>
+      </div>
+
+      <div class="mini-cart__footer">
+        <div class="mini-cart__discount">
+          <button type="button" class="mini-cart__discount-toggle js-mini-cart-discount-toggle" aria-expanded="false">
+            <span>{{ mc_discount }}</span>
+            <span class="mini-cart__discount-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="mini-cart__discount-panel">
+            <div class="mini-cart__discount-row">
+              <input
+                type="text"
+                class="mini-cart__discount-input js-mini-cart-discount-input"
+                placeholder="{{ mc_discount_placeholder }}"
+                autocomplete="off"
+              >
+              <button type="button" class="mini-cart__btn mini-cart__btn--primary mini-cart__btn--apply js-mini-cart-discount-apply">
+                {{ mc_apply }}
+              </button>
+            </div>
+            <p class="mini-cart__discount-message js-mini-cart-discount-message" hidden></p>
+          </div>
+        </div>
+
+        <div class="mini-cart__summary">
+          <div class="mini-cart__total-row">
+            <span class="mini-cart__total-label">{{ mc_total }}</span>
+            <span class="mini-cart__total-price js-mini-cart-total"></span>
+          </div>
+          <div class="mini-cart__applied js-mini-cart-applied"></div>
+          <p class="mini-cart__total-note">{{ mc_total_note }}</p>
+        </div>
+
+        <a href="/checkout" class="mini-cart__btn mini-cart__btn--primary mini-cart__checkout js-mini-cart-checkout">
+          {{ mc_checkout }}
+        </a>
+      </div>
+    </div>
+  </aside>
+</div>
