@@ -1,44 +1,39 @@
 {%- if template contains 'customers' -%}
-	{{ 'haravan_common.js' | haravan_asset_url | script_tag }}
-	{{ 'customer_area.js' | haravan_asset_url | script_tag }}
+  {{ 'haravan_common.js' | haravan_asset_url | script_tag }}
+  {{ 'customer_area.js' | haravan_asset_url | script_tag }}
 {%- endif -%}
 <script>
-	window.app = {
-		urlFile: 'https://customer-rating-apps.hara.vn/api/buyer/upload/files',
-		postRating: '/apps/customer_rating/product_rating',
-		defaultRating: '/apps/customer_rating/content_rating/product?org_id=' + window.shop.id,
-	}
   window.varibleCollection = {};
   window.filterPrice = {
     min: {% if settings.min_filter_price %}{{ settings.min_filter_price }}{% else %}0{% endif %},
-    max: {% if settings.max_filter_price %}{{ settings.max_filter_price }}{% else %}0{% endif %}
+    max: {% if settings.max_filter_price and settings.max_filter_price != 0 %}{{ settings.max_filter_price }}{% else %}1000000{% endif %}
   }
 </script>
 {%- if template contains 'collection' -%}
-<script>
-	window.varibleCollection = {
-		id: "{{ collection.id }}",
-		title: {{ collection.title | json }},
-		handle: "{{ collection.handle }}",
-		defaultSortBy: "{{collection.default_sort_by}}",
-    totalProduct: "{{ collection.all_products_count }}",
-    keyMenu: "{{ collection.metafields.hrvmultilang_vi.key_menu }}",
-    limit: 36
-	}
-</script>
+  <script>
+    window.varibleCollection = {
+    	id: "{{ collection.id }}",
+    	title: {{ collection.title | json }},
+    	handle: "{{ collection.handle }}",
+    	defaultSortBy: "{{collection.default_sort_by}}",
+       totalProduct: "{{ collection.all_products_count }}",
+       keyMenu: "{{ collection.metafields.hrvmultilang_vi.key_menu }}",
+       limit: 20
+    }
+  </script>
 {%- endif -%}
 <script type="text/javascript" data-src="{{ 'main.js' | asset_url }}"></script>
 <script>
-	document.addEventListener("DOMContentLoaded", function(event) { 
-		let jsquery = document.querySelectorAll('script[data-src]');
-		if(jsquery.length > 0){
-			for(let i=0;i< jsquery.length;i++){
-				let src_ = jsquery[i].getAttribute('data-src');
-				const script = document.createElement("script");
-				script.setAttribute("async","");
-				script.setAttribute("src",src_);
-				document.getElementsByTagName("head")[0].appendChild(script);
-			}
-		}
-	});
+  document.addEventListener('DOMContentLoaded', function (event) {
+    let jsquery = document.querySelectorAll('script[data-src]');
+    if (jsquery.length > 0) {
+      for (let i = 0; i < jsquery.length; i++) {
+        let src_ = jsquery[i].getAttribute('data-src');
+        const script = document.createElement('script');
+        script.setAttribute('async', '');
+        script.setAttribute('src', src_);
+        document.getElementsByTagName('head')[0].appendChild(script);
+      }
+    }
+  });
 </script>

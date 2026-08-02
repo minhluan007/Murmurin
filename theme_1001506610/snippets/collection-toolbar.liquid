@@ -1,0 +1,221 @@
+{%- comment -%}
+  Desktop: dropdown trên thanh đỏ
+  Mobile: nút Filter → sidebar
+  Filter HTML chỉ render 1 lần trong .collection-sidebar__body
+{%- endcomment -%}
+
+<div class="collection-toolbar">
+  <div class="collection-toolbar__inner container-fluid">
+    <button
+      type="button"
+      class="collection-toolbar__open"
+      data-open-collection-filter
+      aria-controls="collection-filter-sidebar"
+      aria-expanded="false"
+    >
+      <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M16.823 6h-12m10 4h-8m2 4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+      </svg>
+      <span>Bộ lọc</span>
+    </button>
+
+    <div class="collection-sidebar" id="collection-filter-sidebar" aria-hidden="true">
+      <div class="collection-sidebar__overlay" data-close-collection-filter></div>
+
+      <div class="collection-sidebar__panel" role="dialog" aria-modal="true" aria-label="Bộ lọc">
+        <div class="collection-sidebar__header">
+          <h2 class="collection-sidebar__title">Bộ lọc</h2>
+          <button type="button" class="collection-sidebar__close" data-close-collection-filter aria-label="Đóng">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="collection-sidebar__body">
+          {%- if settings.display_collection_brand -%}
+            {%- comment -%} Brand {%- endcomment -%}
+            <div class="collection-filter" data-filter="brand">
+              <button type="button" class="collection-filter__trigger" aria-expanded="false">
+                <span>{{ settings.collection_brand_title }}</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="collection-filter__dropdown">
+                <ul class="collection-filter__list filter-list filter-list-brand">
+                  {%- if collection_vendors != blank and collection_vendors.size > 0 -%}
+                    {%- for vendor in collection_vendors -%}
+                      <li>
+                        <input
+                          id="filter-brand-{{ forloop.index }}"
+                          type="checkbox"
+                          name="brand"
+                          value="{{ vendor | escape }}"
+                        >
+                        <label for="filter-brand-{{ forloop.index }}">{{ vendor }}</label>
+                      </li>
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- assign seen_vendors = '' -%}
+                    {%- for product in collection.products -%}
+                      {%- unless product.vendor == blank -%}
+                        {%- assign vendor_token = product.vendor | append: '|' -%}
+                        {%- unless seen_vendors contains vendor_token -%}
+                          {%- assign seen_vendors = seen_vendors | append: vendor_token -%}
+                          <li>
+                            <input
+                              id="filter-brand-{{ forloop.index }}"
+                              type="checkbox"
+                              name="brand"
+                              value="{{ product.vendor | escape }}"
+                            >
+                            <label for="filter-brand-{{ forloop.index }}">{{ product.vendor }}</label>
+                          </li>
+                        {%- endunless -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if settings.display_collection_type -%}
+            {%- comment -%} Product type {%- endcomment -%}
+            <div class="collection-filter" data-filter="type">
+              <button type="button" class="collection-filter__trigger" aria-expanded="false">
+                <span>{{ settings.collection_type_title }}</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="collection-filter__dropdown">
+                <ul class="collection-filter__list filter-list filter-list-type">
+                  {%- if collection_types != blank and collection_types.size > 0 -%}
+                    {%- for type in collection_types -%}
+                      <li>
+                        <input
+                          id="filter-type-{{ forloop.index }}"
+                          type="checkbox"
+                          name="type"
+                          value="{{ type | escape }}"
+                        >
+                        <label for="filter-type-{{ forloop.index }}">{{ type }}</label>
+                      </li>
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- assign seen_types = '' -%}
+                    {%- for product in collection.products -%}
+                      {%- unless product.type == blank -%}
+                        {%- assign type_token = product.type | append: '|' -%}
+                        {%- unless seen_types contains type_token -%}
+                          {%- assign seen_types = seen_types | append: type_token -%}
+                          <li>
+                            <input
+                              id="filter-type-{{ forloop.index }}"
+                              type="checkbox"
+                              name="type"
+                              value="{{ product.type | escape }}"
+                            >
+                            <label for="filter-type-{{ forloop.index }}">{{ product.type }}</label>
+                          </li>
+                        {%- endunless -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if settings.display_collection_price -%}
+            {%- comment -%} Price {%- endcomment -%}
+            <div class="collection-filter collection-filter--price" data-filter="price">
+              <button type="button" class="collection-filter__trigger" aria-expanded="false">
+                <span>{{ settings.collection_price_title }}</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="collection-filter__dropdown collection-filter__dropdown--price">
+                <div class="collection-price listing-item filter-price">
+                  <div id="slider-range" data-min="{{ price_min_default }}" data-max="{{ price_max_default }}"></div>
+                  <div class="text-filter-price">
+                    <input type="text" id="priceMin" class="collection-price__field" placeholder="Min" readonly>
+                    <span class="collection-price__sep">to</span>
+                    <input type="text" id="priceMax" class="collection-price__field" placeholder="Max" readonly>
+                    <span class="text-show-price-l"></span>
+                    <span class="text-show-price-r"></span>
+                    <input type="hidden" name="price" value="">
+                  </div>
+                  <p class="collection-price__hint">
+                    Giá cao nhất là
+                    <span data-price-highest>{{ price_max_default | times: 100 | money }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          <div class="collection-toolbar__meta">
+            <span class="collection-toolbar__count results-count">
+              <strong>{{ collection.all_products_count | default: collection.products_count }}</strong> sản phẩm
+            </span>
+          </div>
+
+          {%- comment -%} Sort {%- endcomment -%}
+          <div class="collection-filter collection-filter--sort sort-collection" data-filter="sort">
+            <button type="button" class="collection-filter__trigger btn-sort" aria-expanded="false">
+              <span>
+                <span class="collection-filter__label-main">Sắp xếp</span>
+                <em class="show-sort collection-filter__current">Mặc định</em>
+              </span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="collection-filter__dropdown sort-by-content">
+              <ul class="collection-filter__list collection-filter__list--sort">
+                <li class="active">
+                  <span data-value="manual" data-filter="">Mặc định</span>
+                </li>
+                <li>
+                  <span data-value="best-selling" data-filter="(sold_quantity:product=desc)">Bán chạy</span>
+                </li>
+                <li>
+                  <span data-value="price-ascending" data-filter="(price:product=asc)">Giá tăng dần</span>
+                </li>
+                <li>
+                  <span data-value="price-descending" data-filter="(price:product=desc)">Giá giảm dần</span>
+                </li>
+                <li>
+                  <span data-value="title-ascending" data-filter="(title:product=asc)">Tên A–Z</span>
+                </li>
+                <li>
+                  <span data-value="title-descending" data-filter="(title:product=desc)">Tên Z–A</span>
+                </li>
+                <li>
+                  <span data-value="created-descending" data-filter="(created_at:product=desc)">Mới nhất</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="collection-sidebar__footer">
+          <button type="button" class="collection-sidebar__clear clear-all d-none" data-clear-collection-filter>
+            Xóa tất cả
+          </button>
+          <button type="button" class="collection-sidebar__apply" data-apply-collection-filter>
+            Xem
+            <span class="results-count">
+              <strong>{{ collection.all_products_count | default: collection.products_count }}</strong>
+            </span>
+            sản phẩm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
