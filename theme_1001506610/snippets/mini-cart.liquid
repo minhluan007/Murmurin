@@ -12,6 +12,7 @@
   {%- assign mc_total = 'Estimated total' -%}
   {%- assign mc_total_note = 'Taxes and shipping calculated at checkout.' -%}
   {%- assign mc_checkout = 'Check out' -%}
+  {%- assign mc_view_cart = 'View cart' -%}
   {%- assign mc_close = 'Close' -%}
   {%- assign mc_remove = 'Remove' -%}
   {%- assign mc_decrease = 'Decrease quantity' -%}
@@ -35,6 +36,7 @@
   {%- assign mc_total = 'Tạm tính' -%}
   {%- assign mc_total_note = 'Thuế và phí vận chuyển sẽ được tính khi thanh toán.' -%}
   {%- assign mc_checkout = 'Thanh toán' -%}
+  {%- assign mc_view_cart = 'Giỏ hàng' -%}
   {%- assign mc_close = 'Đóng' -%}
   {%- assign mc_remove = 'Xóa' -%}
   {%- assign mc_decrease = 'Giảm số lượng' -%}
@@ -58,6 +60,7 @@
   data-label-apply="{{ mc_apply | escape }}"
   data-label-total="{{ mc_total | escape }}"
   data-label-checkout="{{ mc_checkout | escape }}"
+  data-label-view-cart="{{ mc_view_cart | escape }}"
   data-label-remove="{{ mc_remove | escape }}"
   data-label-decrease="{{ mc_decrease | escape }}"
   data-label-increase="{{ mc_increase | escape }}"
@@ -139,9 +142,14 @@
           <p class="mini-cart__total-note">{{ mc_total_note }}</p>
         </div>
 
-        <a href="/checkout" class="mini-cart__btn mini-cart__btn--primary mini-cart__checkout js-mini-cart-checkout">
-          {{ mc_checkout }}
-        </a>
+        <div class="mini-cart__actions">
+          <a href="/cart" class="mini-cart__btn mini-cart__btn--secondary mini-cart__view-cart">
+            {{ mc_view_cart }}
+          </a>
+          <a href="/checkout" class="mini-cart__btn mini-cart__btn--primary mini-cart__checkout js-mini-cart-checkout">
+            {{ mc_checkout }}
+          </a>
+        </div>
       </div>
     </div>
   </aside>
