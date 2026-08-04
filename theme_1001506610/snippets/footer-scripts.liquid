@@ -16,10 +16,18 @@
     	title: {{ collection.title | json }},
     	handle: "{{ collection.handle }}",
     	defaultSortBy: "{{collection.default_sort_by}}",
-       totalProduct: "{{ collection.all_products_count }}",
-       keyMenu: "{{ collection.metafields.hrvmultilang_vi.key_menu }}",
-       limit: 20
+      totalProduct: "{{ collection.all_products_count }}",
+      limit: 20
     }
+  </script>
+{%- endif -%}
+{%- if template contains 'search' -%}
+  <script>
+    window.varibleCollection = {
+      terms: '{{ search.terms }}',
+      totalProduct: '{{ search.results_count }}',
+      limit: 20,
+    };
   </script>
 {%- endif -%}
 <script type="text/javascript" data-src="{{ 'main.js' | asset_url }}"></script>

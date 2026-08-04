@@ -1,0 +1,137 @@
+<section class="about-page">
+  {%- comment -%} Hero {%- endcomment -%}
+  <section class="about-hero">
+    <div class="about-hero__inner container">
+      {%- if settings.about_hero_heading != blank -%}
+        <h1 class="about-hero__heading">{{ settings.about_hero_heading }}</h1>
+      {%- endif -%}
+      {%- if settings.about_hero_subtitle != blank -%}
+        <div class="about-hero__subtitle">
+          <p>{{ settings.about_hero_subtitle }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+
+  {%- comment -%} Split 1 — Image left {%- endcomment -%}
+  <section class="about-split">
+    <div class="about-split__media">
+      {%- if settings.about_split1_image != blank -%}
+        <img
+          data-src="{{ settings.about_split1_image }}"
+          alt="{{ settings.about_split1_heading | escape }}"
+          class="lazyload"
+          width="1000"
+          height="1200"
+        >
+      {%- endif -%}
+    </div>
+    <div class="about-split__content">
+      <div class="about-split__content-inner">
+        {%- if settings.about_split1_heading != blank -%}
+          <h2 class="about-split__heading">{{ settings.about_split1_heading }}</h2>
+        {%- endif -%}
+        {%- if settings.about_split1_body != blank -%}
+          <div class="about-split__body">
+            <p>{{ settings.about_split1_body }}</p>
+          </div>
+        {%- endif -%}
+        {%- if settings.about_split1_button_text != blank -%}
+          <a href="{{ settings.about_split1_button_link }}" class="about-split__btn" title="{{ settings.about_split1_button_text | escape }}">
+            {{ settings.about_split1_button_text }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} Quote {%- endcomment -%}
+  <section class="about-quote">
+    <div class="about-quote__inner container">
+      {%- if settings.about_quote_text != blank -%}
+        <blockquote class="about-quote__text">“{{ settings.about_quote_text }}”</blockquote>
+      {%- endif -%}
+      {%- if settings.about_quote_attribution != blank -%}
+        <p class="about-quote__attribution">-{{ settings.about_quote_attribution }}</p>
+      {%- endif -%}
+      {%- if settings.about_quote_link_text != blank -%}
+        <a href="{{ settings.about_quote_link_url }}" class="about-quote__link" title="{{ settings.about_quote_link_text | escape }}">
+          {{ settings.about_quote_link_text }}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      {%- endif -%}
+    </div>
+  </section>
+
+  {%- comment -%} Split 2 — Image right {%- endcomment -%}
+  <section class="about-split about-split--reverse">
+    <div class="about-split__media">
+      {%- if settings.about_split2_image != blank -%}
+        <img
+          data-src="{{ settings.about_split2_image }}"
+          alt="{{ settings.about_split2_heading | escape }}"
+          class="lazyload"
+          width="1000"
+          height="800"
+        >
+      {%- endif -%}
+    </div>
+    <div class="about-split__content">
+      <div class="about-split__content-inner">
+        {%- if settings.about_split2_heading != blank -%}
+          <h2 class="about-split__heading">{{ settings.about_split2_heading }}</h2>
+        {%- endif -%}
+        {%- if settings.about_split2_body != blank -%}
+          <div class="about-split__body">
+            <p>{{ settings.about_split2_body }}</p>
+          </div>
+        {%- endif -%}
+        {%- if settings.about_split2_button_text != blank -%}
+          <a href="{{ settings.about_split2_button_link }}" class="about-split__btn" title="{{ settings.about_split2_button_text | escape }}">
+            {{ settings.about_split2_button_text }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} Category grid {%- endcomment -%}
+  <section class="about-grid">
+    {%- for i in (1..3) -%}
+      {%- capture image_key -%}about_grid{{ i }}_image{%- endcapture -%}
+      {%- capture label_key -%}about_grid{{ i }}_label{%- endcapture -%}
+      {%- capture link_key -%}about_grid{{ i }}_link{%- endcapture -%}
+      {%- assign grid_image = settings[image_key] -%}
+      {%- assign grid_label = settings[label_key] -%}
+      {%- assign grid_link = settings[link_key] -%}
+      <a
+        href="{% if grid_link != blank %}{{ grid_link }}{% else %}#{% endif %}"
+        class="about-grid__item"
+        {% if grid_label != blank %}title="{{ grid_label | escape }}"{% endif %}
+      >
+        <div class="about-grid__media">
+          {%- if grid_image != blank -%}
+            <img
+              data-src="{{ grid_image }}"
+              alt="{{ grid_label | escape }}"
+              class="lazyload"
+              width="800"
+              height="600"
+            >
+          {%- endif -%}
+        </div>
+        {%- if grid_label != blank -%}
+          <span class="about-grid__label">{{ grid_label }}</span>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </section>
+</section>

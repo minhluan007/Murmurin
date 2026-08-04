@@ -2390,6 +2390,7 @@ MLPRO.Collection = {
     filterPriced: false,
     currentPage: 1,
     sort: '',
+    q: '',
     dataColl: typeof varibleCollection !== 'undefined' ? varibleCollection : {},
     priceTimer: null,
 
@@ -2763,14 +2764,24 @@ MLPRO.Collection = {
       this.reFillSort(value);
     },
 
+    isSearchTemplate: function () {
+      return typeof shop !== 'undefined' && shop.template && shop.template.indexOf('search') !== -1;
+    },
+
+    hasExtraFilters: function () {
+      return this.brand.length > 0 || this.type.length > 0 || this.isPriceFiltered();
+    },
+
     checkUrl: function () {
       var self = this;
       var params = self.parseArgs();
       var $collection = self.dataColl;
+      var isSearch = self.isSearchTemplate();
 
       self.brand = [];
       self.type = [];
       self.sort = '';
+      self.q = '';
       self.currentPage = params.page ? parseInt(params.page, 10) || 1 : 1;
       self.setPriceUI(self.priceBoundMin, self.priceBoundMax, true);
       $('input[name="brand"], input[name="type"]').prop('checked', false);
@@ -2802,8 +2813,25 @@ MLPRO.Collection = {
         self.checkDefaultSort();
       }
 
+      // q chỉ xử lý trên template search
+      if (isSearch && params.q) {
+        self.q = $.trim(String(params.q));
+      }
+
       self.isFilter = self.brand.length > 0 || self.type.length > 0 || self.isPriceFiltered() || !!self.sort;
+      if (isSearch && self.q) {
+        self.isFilter = true;
+      }
       self.syncClearButton();
+
+      if (isSearch) {
+        if (self.q) {
+          self.filterRender();
+        } else {
+          self.handleSearchNoQuery();
+        }
+        return;
+      }
 
       if (self.isFilter) {
         self.filterRender();
@@ -2812,11 +2840,22 @@ MLPRO.Collection = {
       }
     },
 
+    handleSearchNoQuery: function () {
+      $('.search-page .collection-toolbar').addClass('d-none');
+      $('.render-product').html('').addClass('empty-product');
+      this.countResultItem(0);
+      $('.pagi-ajax').html('').addClass('d-none');
+      if (MLPRO.Search && typeof MLPRO.Search.showEmpty === 'function') {
+        MLPRO.Search.showEmpty('');
+      }
+    },
+
     buildParam: function (resetPage) {
       var self = this;
       var brand = [];
       var type = [];
       var sort = $('.sort-by-content li.active span').attr('data-value') || '';
+      var isSearch = self.isSearchTemplate();
 
       if (!$('.sort-by-content').hasClass('sorted') || sort === 'manual') {
         sort = '';
@@ -2839,6 +2878,13 @@ MLPRO.Collection = {
         self.currentPage = 1;
       }
 
+      // q chỉ giữ trên URL template search
+      if (isSearch) {
+        params.q = self.q || params.q || '';
+      } else {
+        params.q = '';
+      }
+
       window.history.replaceState('', '', self.buildUrl(params));
       self.checkUrl();
     },
@@ -2847,7 +2893,11 @@ MLPRO.Collection = {
       var self = this;
       var $collection = self.dataColl;
       var cid = parseInt($collection.id, 10) || 0;
+      var isSearch = self.isSearchTemplate();
       var q = cid !== 0 ? '((collectionid:product=' + cid + '))' : '((collectionid:product>0))';
+      if (isSearch) {
+        q = '((collectionid:product>0))';
+      }
 
       if (self.brand.length > 0) {
         var brandQuery = self.brand
@@ -2869,6 +2919,10 @@ MLPRO.Collection = {
 
       if (self.isPriceFiltered()) {
         q += '&&((price_variant:product range ' + self.priceMin + '_' + self.priceMax + '))';
+      }
+
+      if (isSearch && self.q) {
+        q += '&&((title:product contains ' + self.q + '))';
       }
 
       q += '&&((tag:product<>gift))&&((available:product=true))';
@@ -2895,6 +2949,7 @@ MLPRO.Collection = {
       var sort = $('.sort-by-content li.active span').attr('data-filter') || '';
       var page = isPage != null ? isPage : self.currentPage;
       var limit = self.limit;
+      var isSearch = self.isSearchTemplate();
 
       $.ajax({
         type: 'POST',
@@ -2914,10 +2969,28 @@ MLPRO.Collection = {
             self.countResultItem(response.total);
             self.buildPaginate(response.total, limit);
             self.afterRender();
+            if (isSearch && MLPRO.Search && typeof MLPRO.Search.hideEmpty === 'function') {
+              MLPRO.Search.hideEmpty();
+            }
           } else {
-            $('.render-product').html(self.emptyMessage()).addClass('empty-product');
             self.countResultItem(0);
             $('.pagi-ajax').html('').addClass('d-none');
+            if (isSearch) {
+              // Chỉ suggest khi keyword không ra SP; filter phụ → giữ toolbar + thông báo bộ lọc
+              if (self.hasExtraFilters()) {
+                if (MLPRO.Search && typeof MLPRO.Search.hideEmpty === 'function') {
+                  MLPRO.Search.hideEmpty();
+                }
+                $('.render-product').html(self.emptyMessage()).addClass('empty-product');
+              } else {
+                $('.render-product').html('').addClass('empty-product');
+                if (MLPRO.Search && typeof MLPRO.Search.showEmpty === 'function') {
+                  MLPRO.Search.showEmpty(self.q);
+                }
+              }
+            } else {
+              $('.render-product').html(self.emptyMessage()).addClass('empty-product');
+            }
           }
         },
       });
@@ -3447,6 +3520,104 @@ MLPRO.Product = {
     });
   },
 };
+MLPRO.Search = {
+  suggestLimit: 12,
+  init: function () {
+    this.boxSearch();
+    MLPRO.Collection.init();
+  },
+  boxSearch: function () {
+    var self = this;
+    var $form = $('.search-header__form');
+    var $input = $('.search-header__input');
+    var $clear = $('.search-header__clear');
+    if (!$form.length || !$input.length) {
+      return;
+    }
+
+    var params = typeof Arg !== 'undefined' && Arg.parse
+      ? Arg.parse(window.location.href) || {}
+      : {};
+    if (params.q) {
+      $input.val(params.q);
+    }
+    self.toggleClear();
+
+    $form.on('submit', function (e) {
+      e.preventDefault();
+      var key = $.trim($input.val());
+      if (!key) {
+        return;
+      }
+      window.location.href = '/search?q=' + encodeURIComponent(key);
+    });
+
+    $input.on('input', function () {
+      self.toggleClear();
+    });
+
+    $clear.on('click', function () {
+      $input.val('').focus();
+      self.toggleClear();
+    });
+  },
+  toggleClear: function () {
+    var hasValue = $.trim($('.search-header__input').val()) !== '';
+    $('.search-header__clear').prop('hidden', !hasValue);
+  },
+  showEmpty: function (keyword) {
+    var $empty = $('.search-header__empty');
+    var $toolbar = $('.search-page .collection-toolbar');
+    var $suggest = $('.search-page__suggest');
+
+    $toolbar.addClass('d-none');
+
+    if ($empty.length) {
+      var prefix = $empty.data('empty-prefix') || 'No results found for';
+      var suffix = $empty.data('empty-suffix') || 'Check the spelling or use a different word or phrase.';
+      var q = $.trim(keyword || '');
+      if (q) {
+        $empty.text(prefix + ' "' + q + '". ' + suffix);
+      } else {
+        $empty.text(suffix);
+      }
+      $empty.removeClass('d-none');
+    }
+
+    if ($suggest.length) {
+      $suggest.removeClass('d-none');
+      this.renderSuggest();
+    }
+  },
+  hideEmpty: function () {
+    $('.search-header__empty').addClass('d-none').text('');
+    $('.search-page .collection-toolbar').removeClass('d-none');
+    $('.search-page__suggest').addClass('d-none');
+  },
+  renderSuggest: function () {
+    var self = this;
+    var $list = $('.js-product-suggest');
+    var $wrap = $('.search-page__suggest');
+    if (!$list.length) {
+      return;
+    }
+
+    var handle = $wrap.data('handle') || 'fe-test';
+    MLPRO.LoopItem.collectionJS2(handle, 1, self.suggestLimit, function (response) {
+      if (!response || !response.products || !response.products.length) {
+        $list.html('');
+        $wrap.addClass('d-none');
+        return;
+      }
+
+      var items = MLPRO.LoopItem.loopHtml(response, true, false);
+      $list.html(items);
+      if (MLPRO.LoopItem && typeof MLPRO.LoopItem.productLoopSwiper === 'function') {
+        MLPRO.LoopItem.productLoopSwiper();
+      }
+    });
+  },
+};
 
 MLPRO.Init = function () {
   MLPRO.Global.init();
@@ -3458,6 +3629,9 @@ MLPRO.Init = function () {
   }
   if (shop.template.indexOf('product') != -1) {
     MLPRO.Product.init();
+  }
+  if (shop.template.indexOf('search') != -1) {
+    MLPRO.Search.init();
   }
 };
 

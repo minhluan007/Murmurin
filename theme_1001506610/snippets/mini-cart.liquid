@@ -125,7 +125,10 @@
                 placeholder="{{ mc_discount_placeholder }}"
                 autocomplete="off"
               >
-              <button type="button" class="mini-cart__btn mini-cart__btn--primary mini-cart__btn--apply js-mini-cart-discount-apply">
+              <button
+                type="button"
+                class="mini-cart__btn mini-cart__btn--primary mini-cart__btn--apply js-mini-cart-discount-apply"
+              >
                 {{ mc_apply }}
               </button>
             </div>
@@ -143,9 +146,11 @@
         </div>
 
         <div class="mini-cart__actions">
-          <a href="/cart" class="mini-cart__btn mini-cart__btn--secondary mini-cart__view-cart">
-            {{ mc_view_cart }}
-          </a>
+          {% comment %}
+            <a href="/cart" class="mini-cart__btn mini-cart__btn--secondary mini-cart__view-cart">
+              {{ mc_view_cart }}
+            </a>
+          {% endcomment %}
           <a href="/checkout" class="mini-cart__btn mini-cart__btn--primary mini-cart__checkout js-mini-cart-checkout">
             {{ mc_checkout }}
           </a>

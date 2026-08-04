@@ -44,8 +44,12 @@
               </button>
               <div class="collection-filter__dropdown">
                 <ul class="collection-filter__list filter-list filter-list-brand">
-                  {%- if collection_vendors != blank and collection_vendors.size > 0 -%}
-                    {%- for vendor in collection_vendors -%}
+                  {%- assign listVendors = collection_vendors -%}
+                  {%- if template contains 'search' -%}
+                    {%- assign listVendors = shop.vendors -%}
+                  {%- endif -%}
+                  {%- if listVendors != blank and listVendors.size > 0 -%}
+                    {%- for vendor in listVendors -%}
                       <li>
                         <input
                           id="filter-brand-{{ forloop.index }}"
@@ -55,25 +59,6 @@
                         >
                         <label for="filter-brand-{{ forloop.index }}">{{ vendor }}</label>
                       </li>
-                    {%- endfor -%}
-                  {%- else -%}
-                    {%- assign seen_vendors = '' -%}
-                    {%- for product in collection.products -%}
-                      {%- unless product.vendor == blank -%}
-                        {%- assign vendor_token = product.vendor | append: '|' -%}
-                        {%- unless seen_vendors contains vendor_token -%}
-                          {%- assign seen_vendors = seen_vendors | append: vendor_token -%}
-                          <li>
-                            <input
-                              id="filter-brand-{{ forloop.index }}"
-                              type="checkbox"
-                              name="brand"
-                              value="{{ product.vendor | escape }}"
-                            >
-                            <label for="filter-brand-{{ forloop.index }}">{{ product.vendor }}</label>
-                          </li>
-                        {%- endunless -%}
-                      {%- endunless -%}
                     {%- endfor -%}
                   {%- endif -%}
                 </ul>
@@ -92,8 +77,12 @@
               </button>
               <div class="collection-filter__dropdown">
                 <ul class="collection-filter__list filter-list filter-list-type">
-                  {%- if collection_types != blank and collection_types.size > 0 -%}
-                    {%- for type in collection_types -%}
+                  {%- assign listTypes = collection_types -%}
+                  {%- if template contains 'search' -%}
+                    {%- assign listTypes = shop.types -%}
+                  {%- endif -%}
+                  {%- if listTypes != blank and listTypes.size > 0 -%}
+                    {%- for type in listTypes -%}
                       <li>
                         <input
                           id="filter-type-{{ forloop.index }}"

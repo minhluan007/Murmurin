@@ -1,72 +1,104 @@
-<div id="page">
-	<div class="col-md-9 col-xs-12" id="layout-page">
+{%- assign current_language = cart.attributes.language | default: 'vi' -%}
+{%- if current_language == 'en' -%}
+  {%- assign contact_intro = 'Have a question, comment, or concern? Let us know and we will get in touch with you as soon as possible.' -%}
+  {%- assign contact_label_name = 'Name' -%}
+  {%- assign contact_label_email = 'Email' -%}
+  {%- assign contact_label_phone = 'Phone' -%}
+  {%- assign contact_label_comment = 'Comment' -%}
+  {%- assign contact_submit = 'Send' -%}
+  {%- assign contact_success = 'Thanks for contacting us! We will get back to you as soon as possible.' -%}
+{%- else -%}
+  {%- assign contact_intro = 'Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể.' -%}
+  {%- assign contact_label_name = 'Tên' -%}
+  {%- assign contact_label_email = 'Email' -%}
+  {%- assign contact_label_phone = 'Số điện thoại' -%}
+  {%- assign contact_label_comment = 'Nội dung' -%}
+  {%- assign contact_submit = 'Gửi' -%}
+  {%- assign contact_success = 'Cám ơn bạn đã liên hệ! Chúng tôi sẽ trả lời ngay khi có thể.' -%}
+{%- endif -%}
 
-		<span class="header-contact header-page clearfix">
-			<h1>{{ page.title }}</h1>
-		</span>
+<section class="contact-page">
+  <div class="contact-page__inner container">
+    <h1 class="contact-page__title">{{ page.title }}</h1>
 
-		<div class="content-contact content-page">
-			{% if settings.show_google_maps and settings.google_maps_code != blank %}
-			<p class="text-center">
-				{{ settings.google_maps_code }}
-			</p>
-			{% endif %}
+    {%- if page.content != blank -%}
+      <div class="contact-page__intro">{{ page.content }}</div>
+    {%- else -%}
+      <p class="contact-page__intro">{{ contact_intro }}</p>
+    {%- endif -%}
 
-			<div class="col-md-7" id="col-left contactFormWrapper">
-				<h3>Viết nhận xét</h3>
-				<hr class="line-left"/>
-				<p>
-					Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể .
-				</p>
-				{% form 'contact' %}
-				{% if form.posted_successfully? %}
-				<div class="alert alert-success">
-					Cám ơn bạn đã liên hệ! Chúng tôi sẽ trả lời ngay khi có thể
-				</div>
-				{% endif %}
+    {% form 'contact' %}
+      {%- if form.posted_successfully? -%}
+        <div class="contact-form__alert contact-form__alert--success">
+          {{ contact_success }}
+        </div>
+      {%- endif -%}
 
+      {%- if form.errors -%}
+        <div class="contact-form__alert contact-form__alert--error">
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
 
-				<div class="form-group">
-					<label for="contactFormName" class="sr-only">Tên</label>
-					<input required type="text" id="contactFormName" class="form-control input-lg" name="contact[name]" placeholder="Tên của bạn" autocapitalize="words" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}">
-				</div>
-				<div class="form-group">
-					<label for="contactFormEmail" class="sr-only">Email</label>
-					<input required type="email" name="contact[email]" placeholder="Email của bạn" id="contactFormEmail" class="form-control input-lg" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
-				</div>
-				<div class="form-group">
-					<label for="contactFormMessage" class="sr-only">Nội dung</label>
-					<textarea required rows="6" name="contact[body]" class="form-control" placeholder="Viết bình luận" id="contactFormMessage">{% if form.body %}{{ form.body }}{% endif %}</textarea>
-				</div>
+      <div class="contact-form">
+        <div class="contact-form__row contact-form__row--2">
+          <div class="contact-form__field">
+            <label for="contactFormName">{{ contact_label_name }}</label>
+            <input
+              required
+              type="text"
+              id="contactFormName"
+              name="contact[name]"
+              autocapitalize="words"
+              autocomplete="name"
+              value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+            >
+          </div>
 
-				<input type="submit" class="btn btn-primary btn-lg" value="Gửi liên hệ" />
+          <div class="contact-form__field">
+            <label for="contactFormEmail">{{ contact_label_email }}</label>
+            <input
+              required
+              type="email"
+              id="contactFormEmail"
+              name="contact[email]"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            >
+          </div>
+        </div>
 
-				{% endform %}
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="contactFormPhone">{{ contact_label_phone }}</label>
+            <input
+              type="tel"
+              id="contactFormPhone"
+              name="contact[phone]"
+              autocomplete="tel"
+              value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+            >
+          </div>
+        </div>
 
-			</div>
+        <div class="contact-form__row">
+          <div class="contact-form__field contact-form__field--textarea">
+            <label for="contactFormMessage">{{ contact_label_comment }}</label>
+            <textarea
+              required
+              rows="8"
+              id="contactFormMessage"
+              name="contact[body]"
+            >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+          </div>
+        </div>
 
-			<div class="col-md-5" id="col-right">
-				<h3>Chúng tôi ở đây</h3>
-				<hr class="line-right"/>
-				<h3 class="name-company">{{settings.footer_company}}</h3>
-				<p>	{{settings.footer_text}}	</p>
-				<ul class="info-address">
-					<li>
-						<i class="glyphicon glyphicon-map-marker"></i>
-						<span>{{settings.footer_address}}</span>
-					</li>
-					<li>
-						<i class="glyphicon glyphicon-envelope"></i>
-						<span>{{settings.footer_email}}</span>
-					</li>
-
-					<li>
-						<i class="glyphicon glyphicon-phone-alt"></i> 
-						<span>{{settings.footer_phone}}</span>
-					</li>
-
-				</ul>
-
-			</div>
-		</div>
-	</div>
+        <div class="contact-form__actions">
+          <button type="submit" class="contact-form__submit">{{ contact_submit }}</button>
+        </div>
+      </div>
+    {% endform %}
+  </div>
+</section>
