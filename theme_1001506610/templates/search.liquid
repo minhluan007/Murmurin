@@ -1,104 +1,104 @@
-<div class="col-md-9 col-xs-12 col-sm-12" id="layout-page">
-	<span class="header-search header-page clearfix">
-		<h1>Tìm kiếm</h1>
-	</span>
+{%- comment -%}
+  Search page
+  Price range defaults — edit data-price-min / data-price-max below (or Theme settings min/max_filter_price)
+{%- endcomment -%}
+{%- assign price_min_default = settings.min_filter_price | default: 0 -%}
+{%- assign price_max_default = settings.max_filter_price | default: 1000000 -%}
+{%- if price_max_default == 0 or price_max_default == blank -%}
+  {%- assign price_max_default = 1000000 -%}
+{%- endif -%}
 
-	{% if search.performed %}
-	{% paginate search.results by settings.pagination_limit %}
+{%- assign current_language = cart.attributes.language | default: 'vi' -%}
+{%- if current_language == 'en' -%}
+  {%- assign search_title = 'SEARCH RESULTS' -%}
+  {%- assign search_placeholder = 'Search' -%}
+  {%- assign search_clear = 'Clear' -%}
+  {%- assign search_empty_prefix = 'No results found for' -%}
+  {%- assign search_empty_suffix = 'Check the spelling or use a different word or phrase.' -%}
+  {%- assign search_suggest_title = settings.title_search_suggest -%}
+{%- else -%}
+  {%- assign search_title = 'KẾT QUẢ TÌM KIẾM' -%}
+  {%- assign search_placeholder = 'Tìm kiếm' -%}
+  {%- assign search_clear = 'Xóa' -%}
+  {%- assign search_empty_prefix = 'Không tìm thấy kết quả cho' -%}
+  {%- assign search_empty_suffix = 'Vui lòng kiểm tra chính tả hoặc thử từ khóa khác.' -%}
+  {%- assign search_suggest_title = settings.title_search_suggest -%}
+{%- endif -%}
 
-	{% if search.terms == "" %}
-	<div class="content-page" id="search">
-		<div class="col-md-12 expanded-message">
-			<div class="search-field">
-				<form class="search" action="/search">
-					<input type="submit" alt="Go" id="go"/>
-					<input type="text" name="q" class="search_box" placeholder="Tìm kiếm" value="{{search.terms}}"  />
-				</form>
-			</div>
-		</div> 
-	</div>
-	{% else %}
+{%- assign collection_vendors = collection.all_vendors -%}
+{%- assign collection_types = collection.all_types -%}
 
-	{% if search.results == empty %}
-	<div class="content-page" id="search">
-		<div class="col-md-12 expanded-message">
-			<h2>Không tìm thấy nội dung bạn yêu cầu</h2>
-			<span class="subtext">
-				Không tìm thấy  <strong>"{{ search.terms }}"</strong> . Vui lòng tìm kiếm với từ khóa khác.
-			</span>
-			<div class="search-field">
-				<form class="search" action="/search">
-					<input type="submit" alt="Go" id="go"/>
-          <input type="hidden" name="type" value="product" />
-					<input type="text" name="q" class="search_box" placeholder="Tìm kiếm" value="{{search.terms}}"  />
-				</form>
-			</div>
-		</div>
-	</div>
-	{% else %}
+<section
+  class="collection-page search-page"
+  data-price-min="{{ price_min_default }}"
+  data-price-max="{{ price_max_default }}"
+>
+  <div class="search-header container">
+    <div class="search-header__inner">
+      <h1 class="search-header__title">{{ search_title }}</h1>
 
-	<div class="content-page" id="search">
-		<div class="col-md-12">
-			<span class="subtext">
-				Kết quả tìm kiếm cho  <strong>"{{ search.terms }}"</strong>.
-			</span>
-		</div>
-	</div>
-	<div class="results content-page content-product-list product-list">
-		<!-- Begin results -->
-		{% for product in search.results %}
-		{% include 'product-loop' with collection.handle %}
-		{% endfor %}
-	</div>
-	<!-- End results -->
+      <form class="search-header__form" action="/search" method="get" role="search" autocomplete="off">
+        <span class="search-header__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input
+          type="text"
+          name="q"
+          class="search-header__input"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ search_placeholder }}"
+          aria-label="{{ search_placeholder }}"
+        >
+        <button
+          type="button"
+          class="search-header__clear"
+          aria-label="{{ search_clear }}"
+          {% if search.terms == blank %}
+            hidden
+          {% endif %}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
 
-  {% include 'pagination-default' %}
+      <p
+        class="search-header__empty d-none"
+        data-empty-prefix="{{ search_empty_prefix | escape }}"
+        data-empty-suffix="{{ search_empty_suffix | escape }}"
+      ></p>
+    </div>
+  </div>
 
-  {% endif %}
-  {% endif %}
+  {%- include 'collection-toolbar' -%}
 
-  {% endpaginate %}
+  <div class="collection-body">
+    <div class="collection-list render-product">
+      {%- for i in (1..10) -%}
+        {%- include 'product-loop-no', index: i -%}
+      {%- endfor -%}
+    </div>
+    <div class="pagi-ajax d-none"></div>
+  </div>
 
-  {% else %}
-
-  <div class="content-page" id="search">
-		<div class="col-md-12 expanded-message">
-			<div class="search-field">
-				<form class="search" action="/search">
-					<input type="submit" alt="Go" id="go"/>
-					<input type="text" name="q" class="search_box" placeholder="Tìm kiếm" value="{{search.terms}}"  />
-				</form>
-			</div>
-		</div>
-	</div>
-
-	{% endif %}
-	<!-- /#search -->
-
-	<style>
-    div#search {
-    float: left;
-    width: 100%;
-    outline: none;
-    }
-    .search-field {
-    width: 100%!important;
-    }
-    input#go {
-    width: 34px!important;
-    height: 34px!important;
-    float: right!important;
-    background: url(//hstatic.net/0/0/global/design/theme-default/icon-search.png) {{settings.shop_bg_color }} center no-repeat;
-    margin: 0px!important;
-    font-size: 0px;
-    position: relative!important;
-    top:0px!important;
-    }
-    #search .search_box
-    {
-    width: calc(100% - 34px)!important;
-    float: left;
-    outline: none;
-    padding: 0px 0px 0px 10px;
-    }
-  </style>
+  {%- if settings.display_search_suggest -%}
+    <div
+      class="product-detail__related search-page__suggest d-none"
+      data-handle="{{ collections[settings.mini_search_collection].handle }}"
+    >
+      <div class="product-detail__related-title">
+        <h2>{{ search_suggest_title }}</h2>
+      </div>
+      <div class="product-detail__related-list js-product-suggest">
+        {%- for i in (1..10) -%}
+          {%- include 'product-loop-no', index: i -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
