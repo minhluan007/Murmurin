@@ -5,9 +5,7 @@
     style="--about-bg: {{ settings.about_hero_bg }}; --about-title: {{ settings.about_hero_title }}; --about-des: {{ settings.about_hero_des }};"
   >
     <div class="about-hero__inner container">
-      {%- if settings.about_hero_heading != blank -%}
-        <h1 class="about-hero__heading">{{ settings.about_hero_heading }}</h1>
-      {%- endif -%}
+      <h1 class="about-hero__heading">{{ settings.about_hero_heading | default: page.title }}</h1>
       {%- if settings.about_hero_subtitle != blank -%}
         <div class="about-hero__subtitle">
           <p>{{ settings.about_hero_subtitle }}</p>

@@ -3,6 +3,7 @@
   {%- assign home_collection = collections.all -%}
 {%- endif -%}
 
+{%- assign home_h1 = settings.title_homepage_hero | default: shop.name | strip -%}
 {%- if settings.display_homepage_hero -%}
   <section
     class="home-hero"
@@ -21,7 +22,7 @@
       </picture>
     </div>
     <div class="home-hero__content container">
-      <h1 class="home-hero__title">{{ settings.title_homepage_hero }}</h1>
+      <h1 class="home-hero__title">{{ home_h1 }}</h1>
       {%- if settings.button_text_homepage_hero != blank -%}
         <a
           href="{{ settings.button_link_homepage_hero }}"
@@ -36,6 +37,8 @@
       {%- endif -%}
     </div>
   </section>
+{%- else -%}
+  <h1 class="visually-hidden">{{ home_h1 }}</h1>
 {%- endif -%}
 
 {%- if settings.display_homepage_products -%}

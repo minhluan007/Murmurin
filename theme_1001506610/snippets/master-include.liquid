@@ -1,50 +1,65 @@
 <link rel="preconnect" href="https://file.hstatic.net" />
 <link rel="preconnect" href="https://product.hstatic.net" />
 <link rel="preconnect" href="https://theme.hstatic.net" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 {%- include 'fb-open-graph-tags' -%}
 
+{%- comment -%} Google Fonts in head (avoid CSS @import late discovery); only weights actually used {%- endcomment -%}
 <link
-  crossorigin="anonymous"
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+>
+
+{%- comment -%} Critical CSS: preload + apply in one link {%- endcomment -%}
+<link
   rel="preload stylesheet"
   as="style"
   href="{{ 'plugin-css-head.css' | asset_url }}"
   type="text/css"
 >
 <link
-  crossorigin="anonymous"
   rel="preload stylesheet"
   as="style"
   href="{{ 'styles.scss.css' | asset_url }}"
   type="text/css"
 >
 
+{%- comment -%} Preload JS used via data-src (discovered late) so browser fetches early {%- endcomment -%}
 <link
   fetchpriority="high"
   href="{{ 'plugins-jquery.js' | asset_url }}"
   rel="preload"
   as="script"
-  type="text/javascript"
 >
 <link
-  fetchpriority="medium"
+  fetchpriority="low"
   href="{{ 'plugin-script.js' | asset_url }}"
   rel="preload"
   as="script"
-  type="text/javascript"
 >
 <link
-  fetchpriority="medium"
+  fetchpriority="low"
   href="{{ 'jquery.fancybox.min.js' | asset_url }}"
   rel="preload"
   as="script"
-  type="text/javascript"
 >
 <link
-  fetchpriority="medium"
+  fetchpriority="low"
   href="{{ 'api.jquery.js' | haravan_asset_url }}"
   rel="preload"
   as="script"
-  type="text/javascript"
+>
+<link
+  fetchpriority="low"
+  href="{{ 'main.js' | asset_url }}"
+  rel="preload"
+  as="script"
 >
 
 <script type="text/javascript" src="{{ 'plugins-jquery.js' | asset_url }}"></script>
@@ -80,6 +95,17 @@
   :root {
     --font-heading: 'Barlow Condensed', sans-serif;
     --font-body: 'Inter', sans-serif;
+    --color-mega-menu-underline: {{ settings.color_mega_menu_underline | default: '#7b0c0c' }};
+    --color-mini-cart-accent: {{ settings.color_mini_cart_accent | default: '#a50d25' }};
+    --color-mini-cart-accent-hover: {{ settings.color_mini_cart_accent_hover | default: '#8a0b1f' }};
+    --color-mini-search-view-all-hover: {{ settings.color_mini_search_view_all_hover | default: '#a50d25' }};
+    --color-collection-accent: {{ settings.color_collection_accent | default: '#8a0b1f' }};
+    --color-product-accent: {{ settings.color_product_accent | default: '#8a0b1f' }};
+    --color-product-accent-dark: {{ settings.color_product_accent_dark | default: '#6e0918' }};
+    --color-product-accent-light: {{ settings.color_product_accent_light | default: '#a31228' }};
+    --color-blog-accent: {{ settings.color_blog_accent | default: '#8a0b1f' }};
+    --color-article-accent: {{ settings.color_article_accent | default: '#8a0b1f' }};
+    --color-contact-accent-dark: {{ settings.color_contact_accent_dark | default: '#a50d25' }};
   }
 </style>
 <script>
