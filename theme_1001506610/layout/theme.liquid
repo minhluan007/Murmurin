@@ -21,12 +21,10 @@
     <link rel="canonical" href="{{ canonical_url }}" />
     <link rel="alternate" href="{{ canonical_url }}" hreflang="vi-vn" />
     <meta name="keywords" content="{{ shop.name }}">
-
     {%- assign noIndex = false -%}
     {%- if template contains 'cart' -%}
       {%- assign noIndex = true -%}
     {%- endif -%}
-
     {%- if template contains 'search' -%}
       <meta name="robots" content="noindex, follow" />
     {%- elsif canonical_url contains 'tagged' -%}
@@ -38,8 +36,8 @@
     {%- else -%}
       <meta name="robots" content="index,follow,noodp">
     {%- endif -%}
-
     {%- include 'master-include' -%}
+    {%- include 'schema-jsonld' -%}
     {{ content_for_header }}
   </head>
   <body class="template-{{template | split: '.' | first | replace: '' | replace: '[','_' | replace: ']',''}}">
@@ -60,6 +58,5 @@
     {%- include 'fancybox-alert-global' -%}
     {%- include 'mini-search' -%}
     {%- include 'mini-cart' -%}
-    {%- include 'modal-mso-new-signup' -%}
   </body>
 </html>

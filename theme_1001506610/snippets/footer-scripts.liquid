@@ -30,18 +30,18 @@
     };
   </script>
 {%- endif -%}
+{%- comment -%} main.js already preloaded in master-include; load after DOM ready via data-src {%- endcomment -%}
 <script type="text/javascript" data-src="{{ 'main.js' | asset_url }}"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function (event) {
-    let jsquery = document.querySelectorAll('script[data-src]');
-    if (jsquery.length > 0) {
-      for (let i = 0; i < jsquery.length; i++) {
-        let src_ = jsquery[i].getAttribute('data-src');
-        const script = document.createElement('script');
-        script.setAttribute('async', '');
-        script.setAttribute('src', src_);
-        document.getElementsByTagName('head')[0].appendChild(script);
-      }
+  document.addEventListener('DOMContentLoaded', function () {
+    var jsquery = document.querySelectorAll('script[data-src]');
+    for (var i = 0; i < jsquery.length; i++) {
+      var src_ = jsquery[i].getAttribute('data-src');
+      if (!src_) continue;
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = src_;
+      document.head.appendChild(script);
     }
   });
 </script>
