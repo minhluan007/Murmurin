@@ -4857,17 +4857,19 @@ body.open-collection-filter {
 
 /* ABOUT PAGE */
 .about-page {
-  --about-accent: #c8102e;
-  --about-accent-dark: #a50d25;
-  --about-bg: #f4f4f4;
-  --about-quote-bg: #ead9ce;
+  --about-bg: #ffffff;
+  --about-title: #111111;
+  --about-des: #444444;
+  --about-btn-bg: #c8102e;
+  --about-btn-text: #ffffff;
   background: #fff;
 }
 
 .about-hero {
   padding: 100px 0 72px;
   text-align: center;
-  background: #fff;
+  background: var(--about-bg);
+  color: var(--about-title);
 
   @media (max-width: 991px) {
     padding: 64px 0 48px;
@@ -4886,7 +4888,7 @@ body.open-collection-filter {
     line-height: 1.1;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #111;
+    color: var(--about-title);
     text-wrap: balance;
 
     @media (max-width: 991px) {
@@ -4903,7 +4905,7 @@ body.open-collection-filter {
       margin: 0;
       @include font14;
       line-height: 1.7;
-      color: #444;
+      color: var(--about-des);
     }
   }
 }
@@ -4912,6 +4914,7 @@ body.open-collection-filter {
   display: grid;
   grid-template-columns: 1fr 1fr;
   background: var(--about-bg);
+  color: var(--about-title);
 
   @media (max-width: 991px) {
     grid-template-columns: 1fr;
@@ -4981,7 +4984,7 @@ body.open-collection-filter {
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #111;
+    color: var(--about-title);
 
     @media (max-width: 991px) {
       @include font24;
@@ -4996,7 +4999,7 @@ body.open-collection-filter {
       margin: 0;
       @include font14;
       line-height: 1.7;
-      color: #444;
+      color: var(--about-des);
     }
 
     @media (max-width: 991px) {
@@ -5011,18 +5014,20 @@ body.open-collection-filter {
     gap: 8px;
     min-height: 48px;
     padding: 12px 28px;
-    background: var(--about-accent);
-    color: #fff;
+    background: var(--about-btn-bg);
+    color: var(--about-btn-text);
     font-family: var(--font-heading);
     @include font14;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    transition: background 0.2s ease;
+    transition: opacity 0.2s ease, filter 0.2s ease;
 
     &:hover {
-      background: var(--about-accent-dark);
-      color: #fff;
+      background: var(--about-btn-bg);
+      color: var(--about-btn-text);
+      opacity: 0.9;
+      filter: brightness(0.92);
     }
 
     svg {
@@ -5033,7 +5038,8 @@ body.open-collection-filter {
 
 .about-quote {
   padding: 96px 0;
-  background: var(--about-quote-bg);
+  background: var(--about-bg);
+  color: var(--about-title);
   text-align: center;
 
   @media (max-width: 991px) {
@@ -5054,7 +5060,7 @@ body.open-collection-filter {
     line-height: 1.25;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #111;
+    color: var(--about-title);
     text-wrap: balance;
 
     @media (max-width: 991px) {
@@ -5070,7 +5076,7 @@ body.open-collection-filter {
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #111;
+    color: var(--about-des);
   }
 
   &__link {
@@ -5079,11 +5085,11 @@ body.open-collection-filter {
     gap: 6px;
     @include font14;
     font-weight: 600;
-    color: var(--about-accent);
+    color: var(--about-btn-bg);
     transition: opacity 0.2s ease;
 
     &:hover {
-      color: var(--about-accent-dark);
+      color: var(--about-btn-bg);
       opacity: 0.9;
     }
 

@@ -1,6 +1,9 @@
 <section class="about-page">
   {%- comment -%} Hero {%- endcomment -%}
-  <section class="about-hero">
+  <section
+    class="about-hero"
+    style="--about-bg: {{ settings.about_hero_bg }}; --about-title: {{ settings.about_hero_title }}; --about-des: {{ settings.about_hero_des }};"
+  >
     <div class="about-hero__inner container">
       {%- if settings.about_hero_heading != blank -%}
         <h1 class="about-hero__heading">{{ settings.about_hero_heading }}</h1>
@@ -14,7 +17,10 @@
   </section>
 
   {%- comment -%} Split 1 — Image left {%- endcomment -%}
-  <section class="about-split">
+  <section
+    class="about-split"
+    style="--about-bg: {{ settings.about_split1_bg }}; --about-title: {{ settings.about_split1_title }}; --about-des: {{ settings.about_split1_des }}; --about-btn-bg: {{ settings.about_split1_btn_bg }}; --about-btn-text: {{ settings.about_split1_btn_text }};"
+  >
     <div class="about-split__media">
       {%- if settings.about_split1_image != blank -%}
         <img
@@ -37,7 +43,11 @@
           </div>
         {%- endif -%}
         {%- if settings.about_split1_button_text != blank -%}
-          <a href="{{ settings.about_split1_button_link }}" class="about-split__btn" title="{{ settings.about_split1_button_text | escape }}">
+          <a
+            href="{{ settings.about_split1_button_link }}"
+            class="about-split__btn"
+            title="{{ settings.about_split1_button_text | escape }}"
+          >
             {{ settings.about_split1_button_text }}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -49,7 +59,10 @@
   </section>
 
   {%- comment -%} Quote {%- endcomment -%}
-  <section class="about-quote">
+  <section
+    class="about-quote"
+    style="--about-bg: {{ settings.about_quote_bg }}; --about-title: {{ settings.about_quote_title }}; --about-des: {{ settings.about_quote_des }}; --about-btn-bg: {{ settings.about_quote_btn_bg }}; --about-btn-text: {{ settings.about_quote_btn_text }};"
+  >
     <div class="about-quote__inner container">
       {%- if settings.about_quote_text != blank -%}
         <blockquote class="about-quote__text">“{{ settings.about_quote_text }}”</blockquote>
@@ -58,7 +71,11 @@
         <p class="about-quote__attribution">-{{ settings.about_quote_attribution }}</p>
       {%- endif -%}
       {%- if settings.about_quote_link_text != blank -%}
-        <a href="{{ settings.about_quote_link_url }}" class="about-quote__link" title="{{ settings.about_quote_link_text | escape }}">
+        <a
+          href="{{ settings.about_quote_link_url }}"
+          class="about-quote__link"
+          title="{{ settings.about_quote_link_text | escape }}"
+        >
           {{ settings.about_quote_link_text }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -69,7 +86,10 @@
   </section>
 
   {%- comment -%} Split 2 — Image right {%- endcomment -%}
-  <section class="about-split about-split--reverse">
+  <section
+    class="about-split about-split--reverse"
+    style="--about-bg: {{ settings.about_split2_bg }}; --about-title: {{ settings.about_split2_title }}; --about-des: {{ settings.about_split2_des }}; --about-btn-bg: {{ settings.about_split2_btn_bg }}; --about-btn-text: {{ settings.about_split2_btn_text }};"
+  >
     <div class="about-split__media">
       {%- if settings.about_split2_image != blank -%}
         <img
@@ -92,7 +112,11 @@
           </div>
         {%- endif -%}
         {%- if settings.about_split2_button_text != blank -%}
-          <a href="{{ settings.about_split2_button_link }}" class="about-split__btn" title="{{ settings.about_split2_button_text | escape }}">
+          <a
+            href="{{ settings.about_split2_button_link }}"
+            class="about-split__btn"
+            title="{{ settings.about_split2_button_text | escape }}"
+          >
             {{ settings.about_split2_button_text }}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -115,7 +139,9 @@
       <a
         href="{% if grid_link != blank %}{{ grid_link }}{% else %}#{% endif %}"
         class="about-grid__item"
-        {% if grid_label != blank %}title="{{ grid_label | escape }}"{% endif %}
+        {% if grid_label != blank %}
+          title="{{ grid_label | escape }}"
+        {% endif %}
       >
         <div class="about-grid__media">
           {%- if grid_image != blank -%}

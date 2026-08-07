@@ -729,7 +729,7 @@ MLPRO.Index = {
     var url = $collection.data('url');
     MLPRO.LoopItem.collectionJS2(handle, 1, limit, function (response) {
       if (response.products) {
-        var items = MLPRO.LoopItem.loopHtml(response, true, true);
+        var items = MLPRO.LoopItem.loopHtml(response, true, false);
         $collection.find('.home-products__grid').html(items);
         MLPRO.LoopItem.productLoopSwiper();
       } else {
