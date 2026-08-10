@@ -53,19 +53,38 @@
       </ul>
     </nav>
 
-    {%- if settings.use_banner_card_1_1 and settings.image_banner_card_1_1 != blank -%}
-      <a
-        class="menu-mobile__promo"
-        href="{{ settings.link_banner_card_1_1 | default: '/collections/all' }}"
-        title="{{ settings.title_banner_card_1_1 | default: 'All products' }}"
-      >
-        <img
-          src="{{ settings.image_banner_card_1_1 }}"
-          alt="{{ settings.alt_banner_card_1_1 | default: settings.title_banner_card_1_1 }}"
-          loading="lazy"
-        >
-        <span>{{ settings.title_banner_card_1_1 | default: 'ALL PRODUCTS' | upcase }}</span>
-      </a>
+    {%- if settings.use_banner_card_1_1 or settings.use_banner_card_2_1 -%}
+      <div class="menu-mobile__banners">
+        {%- if settings.use_banner_card_1_1 and settings.image_banner_card_1_1 != blank -%}
+          <a
+            class="menu-mobile__promo"
+            href="{{ settings.link_banner_card_1_1 | default: '/collections/all' }}"
+            title="{{ settings.title_banner_card_1_1 | default: 'All products' }}"
+          >
+            <img
+              src="{{ settings.image_banner_card_1_1 }}"
+              alt="{{ settings.alt_banner_card_1_1 | default: settings.title_banner_card_1_1 }}"
+              loading="lazy"
+            >
+            <span>{{ settings.title_banner_card_1_1 | default: 'ALL PRODUCTS' | upcase }}</span>
+          </a>
+        {%- endif -%}
+
+        {%- if settings.use_banner_card_2_1 and settings.image_banner_card_2_1 != blank -%}
+          <a
+            class="menu-mobile__promo"
+            href="{{ settings.link_banner_card_2_1 | default: '/collections/all' }}"
+            title="{{ settings.title_banner_card_2_1 | default: 'All products' }}"
+          >
+            <img
+              src="{{ settings.image_banner_card_2_1 }}"
+              alt="{{ settings.alt_banner_card_2_1 | default: settings.title_banner_card_2_1 }}"
+              loading="lazy"
+            >
+            <span>{{ settings.title_banner_card_2_1 | default: 'ALL PRODUCTS' | upcase }}</span>
+          </a>
+        {%- endif -%}
+      </div>
     {%- endif -%}
   </div>
 </div>

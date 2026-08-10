@@ -37,7 +37,13 @@
       {%- endif -%}
     </div>
     <div class="collection-banner__content container-fluid">
-      <h1 class="collection-banner__title">{{ collection.title }}</h1>
+      <h1 class="collection-banner__title">
+        {%- if collection.handle == 'all' -%}
+          Tất cả sản phẩm
+        {%- else -%}
+          {{ collection.title }}
+        {%- endif -%}
+      </h1>
     </div>
   </div>
 
