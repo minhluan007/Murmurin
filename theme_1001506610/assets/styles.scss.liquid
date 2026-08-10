@@ -1374,6 +1374,13 @@ input[type="radio"] {
     padding: 4px 24px 20px;
   }
 
+  &__banners {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
   &__list {
     display: flex;
     flex-direction: column;
@@ -1531,18 +1538,23 @@ input[type="radio"] {
 .product-loop {
   min-width: 0;
   background: #f1f1f1;
+
+  &:hover {
+    .product-loop__choose {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
   &__link {
     display: block;
     color: inherit;
+    height: 100%;
 
     &:hover {
       color: inherit;
-
-      .product-loop__choose {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
     }
   }
 
@@ -1664,7 +1676,7 @@ input[type="radio"] {
     position: absolute;
     right: 16px;
     bottom: 16px;
-    z-index: 2;
+    z-index: 4;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -1679,6 +1691,7 @@ input[type="radio"] {
     transform: translateY(6px);
     transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
     pointer-events: none;
+    cursor: pointer;
     outline: 2px solid #cfcfcf;
     font-family: var(--font-heading);
     svg {

@@ -7,7 +7,27 @@
     <meta name="revisit-after" content="1 day" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="HandheldFriendly" content="true">
-    <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+    {% comment %} <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" /> {% endcomment %}
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="{{ settings.favicon_png_96 }}"
+    >
+
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{{ settings.favicon_ico }}"
+    >
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ settings.apple_touch_icon_180 }}"
+    >
+
     {%- include 'titlepage' -%}
     {%- if page_description -%}
       <meta name="description" content="{{ page_description | strip_html | strip_newlines }}" />

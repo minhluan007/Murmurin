@@ -339,9 +339,8 @@ MLPRO.LoopItem = {
         }
 
         htmlItem += `<div class="product-loop">
-          <a href="${product.url}" class="product-loop__link" title="${product.title}">
-            <div class="product-loop__media">
-
+          <div class="product-loop__media">
+            <a href="${product.url}" class="product-loop__link" title="${product.title}">
             ${product.images.length > 0 ? `
               <div class="swiper product-loop__swiper">
                 <div class="swiper-wrapper">
@@ -371,15 +370,15 @@ MLPRO.LoopItem = {
               NO IMAGE -${shop.name}
               </div>
               `}
-
-
-              <span class="product-loop__choose" data-url="${product.url}">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-                  <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.608 9.421V6.906H3.392v8.016c0 .567.224 1.112.624 1.513.4.402.941.627 1.506.627H8.63M8.818 3h2.333c.618 0 1.212.247 1.649.686a2.35 2.35 0 0 1 .683 1.658v1.562H6.486V5.344c0-.622.246-1.218.683-1.658A2.33 2.33 0 0 1 8.82 3"></path><path stroke="#000" stroke-linecap="round" stroke-width="1.5" d="M14.608 12.563v5m2.5-2.5h-5"></path>
-                </svg>
-                Chọn
-              </span>
-            </div>
+            </a>
+            <span class="product-loop__choose" data-url="${product.url}" data-variant-id="${product.variants[0].id}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.608 9.421V6.906H3.392v8.016c0 .567.224 1.112.624 1.513.4.402.941.627 1.506.627H8.63M8.818 3h2.333c.618 0 1.212.247 1.649.686a2.35 2.35 0 0 1 .683 1.658v1.562H6.486V5.344c0-.622.246-1.218.683-1.658A2.33 2.33 0 0 1 8.82 3"></path><path stroke="#000" stroke-linecap="round" stroke-width="1.5" d="M14.608 12.563v5m2.5-2.5h-5"></path>
+              </svg>
+              Mua ngay
+            </span>
+          </div>
+          <a href="${product.url}" class="product-loop__link" title="${product.title}">
             <div class="product-loop__info">
               <div class="product-loop__top">
                 <h3 class="product-loop__title" data-title="${product.title}">${product.title}</h3>
@@ -463,6 +462,7 @@ MLPRO.Global = {
     // MLPRO.FormCustomerMSO.init();
     MLPRO.MiniCart.init();
     MLPRO.Global.getAPI();
+    MLPRO.Global.buyNow();
   },
   getAPI: function () {
     $.when($.getJSON('/cart.js'), $.getJSON('/account.js'))
@@ -473,6 +473,37 @@ MLPRO.Global = {
       .fail(function (error1, error2) {
         console.error('Lỗi khi gọi API', error1, error2);
       });
+  },
+  buyNow: function () {
+    $(document).on('click', '.product-loop__choose', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var variantId = $(this).attr('data-variant-id');
+      if (!variantId) {
+        return;
+      }
+
+      MLPRO.Module.openLoading(function () {
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          dataType: 'json',
+          data: {
+            quantity: 1,
+            id: variantId,
+          },
+          success: function () {
+            MLPRO.Module.removeLoading();
+            MLPRO.Module.getCartSidebar();
+          },
+          error: function () {
+            MLPRO.Module.removeLoading();
+            MLPRO.Module.alertShow('Thông báo', 'Không thể thêm sản phẩm vào giỏ hàng.');
+          },
+        });
+      });
+    });
   },
 }
 MLPRO.Header = {
