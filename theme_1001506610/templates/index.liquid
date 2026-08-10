@@ -82,11 +82,13 @@
             class="home-video__poster lazyload"
           >
         </picture>
-        <button type="button" class="home-video__play" aria-label="Play video">
-          <svg width="24" height="28" viewBox="0 0 24 28" fill="none" aria-hidden="true">
-            <path d="M2 2L22 14L2 26V2Z" fill="currentColor"/>
-          </svg>
-        </button>
+        {%- if settings.youtube_id_homepage_video -%}
+          <button type="button" class="home-video__play" aria-label="Play video">
+            <svg width="24" height="28" viewBox="0 0 24 28" fill="none" aria-hidden="true">
+              <path d="M2 2L22 14L2 26V2Z" fill="currentColor"/>
+            </svg>
+          </button>
+        {%- endif -%}
         <div class="home-video__iframe-wrap"></div>
       </div>
       <div class="home-video__content">
