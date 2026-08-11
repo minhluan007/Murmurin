@@ -5,16 +5,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 {%- include 'fb-open-graph-tags' -%}
 
-{%- comment -%} Google Fonts in head (avoid CSS @import late discovery); only weights actually used {%- endcomment -%}
+{%- comment -%} Google Fonts: Inter (body) + base_font từ settings (heading) {%- endcomment -%}
+{%- assign base_font_setting = settings.base_font | default: 'Barlow+Condensed:400,400i,500,600,700' -%}
+{%- assign base_font_family = base_font_setting | split: ':' | first | replace: '+', ' ' -%}
 <link
   rel="preload"
   as="style"
-  href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
 >
 <link
   rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
 >
+{%- unless base_font_setting contains 'Arial' -%}
+{%- if base_font_setting != blank -%}
+<link
+  rel="preload stylesheet"
+  href="{{ '//fonts.googleapis.com/css?family=' | append: base_font_setting | append: '&display=swap' }}"
+  as="style"
+>
+{%- endif -%}
+{%- endunless -%}
 
 {%- comment -%} Critical CSS: preload + apply in one link {%- endcomment -%}
 <link
@@ -93,7 +104,7 @@
 </script>
 <style>
   :root {
-    --font-heading: 'Barlow Condensed', sans-serif;
+    --font-heading: '{{ base_font_family }}', sans-serif;
     --font-body: 'Inter', sans-serif;
     --color-mega-menu-underline: {{ settings.color_mega_menu_underline | default: '#7b0c0c' }};
     --color-mini-cart-accent: {{ settings.color_mini_cart_accent | default: '#a50d25' }};
