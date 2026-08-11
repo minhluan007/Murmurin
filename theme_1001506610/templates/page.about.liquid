@@ -126,36 +126,38 @@
   </section>
 
   {%- comment -%} Category grid {%- endcomment -%}
-  <section class="about-grid">
-    {%- for i in (1..3) -%}
-      {%- capture image_key -%}about_grid{{ i }}_image{%- endcapture -%}
-      {%- capture label_key -%}about_grid{{ i }}_label{%- endcapture -%}
-      {%- capture link_key -%}about_grid{{ i }}_link{%- endcapture -%}
-      {%- assign grid_image = settings[image_key] -%}
-      {%- assign grid_label = settings[label_key] -%}
-      {%- assign grid_link = settings[link_key] -%}
-      <a
-        href="{% if grid_link != blank %}{{ grid_link }}{% else %}#{% endif %}"
-        class="about-grid__item"
-        {% if grid_label != blank %}
-          title="{{ grid_label | escape }}"
-        {% endif %}
-      >
-        <div class="about-grid__media">
-          {%- if grid_image != blank -%}
-            <img
-              data-src="{{ grid_image }}"
-              alt="{{ grid_label | escape }}"
-              class="lazyload"
-              width="800"
-              height="600"
-            >
+  {%- if settings.display_about_grid -%}
+    <section class="about-grid">
+      {%- for i in (1..3) -%}
+        {%- capture image_key -%}about_grid{{ i }}_image{%- endcapture -%}
+        {%- capture label_key -%}about_grid{{ i }}_label{%- endcapture -%}
+        {%- capture link_key -%}about_grid{{ i }}_link{%- endcapture -%}
+        {%- assign grid_image = settings[image_key] -%}
+        {%- assign grid_label = settings[label_key] -%}
+        {%- assign grid_link = settings[link_key] -%}
+        <a
+          href="{% if grid_link != blank %}{{ grid_link }}{% else %}#{% endif %}"
+          class="about-grid__item"
+          {% if grid_label != blank %}
+            title="{{ grid_label | escape }}"
+          {% endif %}
+        >
+          <div class="about-grid__media">
+            {%- if grid_image != blank -%}
+              <img
+                data-src="{{ grid_image }}"
+                alt="{{ grid_label | escape }}"
+                class="lazyload"
+                width="800"
+                height="600"
+              >
+            {%- endif -%}
+          </div>
+          {%- if grid_label != blank -%}
+            <span class="about-grid__label">{{ grid_label }}</span>
           {%- endif -%}
-        </div>
-        {%- if grid_label != blank -%}
-          <span class="about-grid__label">{{ grid_label }}</span>
-        {%- endif -%}
-      </a>
-    {%- endfor -%}
-  </section>
+        </a>
+      {%- endfor -%}
+    </section>
+  {%- endif -%}
 </section>
