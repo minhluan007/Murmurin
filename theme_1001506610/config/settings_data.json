@@ -1,176 +1,536 @@
 {
-    "current": {
-        "use_logo": false,
-        "display_topbar": true,
-        "background_topbar": "#000000",
-        "color_topbar": "#ffffff",
-        "use_item_topbar_1": true,
-        "title_item_topbar_1": "Miễn phí vận chuyển",
-        "link_item_topbar_1": "/collections/all",
-        "use_item_topbar_2": true,
-        "title_item_topbar_2": "Mua 2 tặng 1",
-        "link_item_topbar_2": "/collections/all",
-        "use_item_topbar_3": true,
-        "title_item_topbar_3": "Giảm 30% khi mua hóa đơn từ 10tr",
-        "link_item_topbar_3": "/collections/all",
-        "main_menu": "main-menu-2026",
-        "logo.png": "",
-        "favicon.png": "",
-        "use_banner_cards_1": true,
-        "use_banner_card_1_1": true,
-        "title_banner_card_1_1": "Banner 1",
-        "link_banner_card_1_1": "/collections/all",
-        "image_banner_card_1_1": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
-        "alt_banner_card_1_1": "Banner 1",
-        "use_banner_card_2_1": true,
-        "title_banner_card_2_1": "Banner 1",
-        "link_banner_card_2_1": "/collections/all",
-        "image_banner_card_2_1": "https://cdn.hstatic.net/files/1000173990/file/banner_aboutus_2.png",
-        "alt_banner_card_2_1": "Banner 1",
-        "use_banner_cards_2": false,
-        "use_banner_card_1_2": false,
-        "title_banner_card_1_2": "",
-        "link_banner_card_1_2": "",
-        "image_banner_card_1_2": "",
-        "alt_banner_card_1_2": "",
-        "use_banner_card_2_2": false,
-        "title_banner_card_2_2": "",
-        "link_banner_card_2_2": "",
-        "image_banner_card_2_2": "",
-        "alt_banner_card_2_2": "",
-        "use_banner_cards_3": false,
-        "use_banner_card_1_3": false,
-        "title_banner_card_1_3": "",
-        "link_banner_card_1_3": "",
-        "image_banner_card_1_3": "",
-        "alt_banner_card_1_3": "",
-        "use_banner_card_2_3": false,
-        "title_banner_card_2_3": "",
-        "link_banner_card_2_3": "",
-        "image_banner_card_2_3": "",
-        "alt_banner_card_2_3": "",
-        "display_homepage_hero": true,
-        "width_homepage_hero": "1920",
-        "height_homepage_hero": "1080",
-        "image_homepage_hero_desktop": "https://cdn.hstatic.net/files/1000173990/file/homepage_desktop_2d953705a5f04c789d205f704cd8550e.jpg",
-        "image_homepage_hero_mobile": "https://cdn.hstatic.net/files/1000173990/file/homepage_mobile_9664d0207a564444a5a5248305936c85.jpg",
-        "title_homepage_hero": "THE MAMMA'S CLASSICS",
-        "button_text_homepage_hero": "Xem ngay",
-        "link_button_homepage_hero": "/collections/all",
-        "width_homepage_hero_desktop": "1942",
-        "height_homepage_hero_desktop": "977",
-        "width_homepage_hero_mobile": "430",
-        "height_homepage_hero_mobile": " 699",
-        "display_homepage_products": true,
-        "collection_homepage_products": "fe-test",
-        "limit_homepage_products": "6",
-        "display_homepage_video": true,
-        "width_homepage_video_desktop": "1200",
-        "height_homepage_video_desktop": "800",
-        "width_homepage_video_mobile": "1200",
-        "height_homepage_video_mobile": "800",
-        "youtube_id_homepage_video": "",
-        "image_homepage_video_poster": "https://cdn.hstatic.net/files/1000173990/file/home_video_banner.jpg",
-        "image_homepage_video_poster_mobile": "https://cdn.hstatic.net/files/1000173990/file/home_video_banner.jpg",
-        "alt_homepage_video_poster": "Ingredients Matter",
-        "title_homepage_video": "Ingredients Matter",
-        "description_homepage_video": "Every flavour begins with an ingredient chosen for its natural character. We select chocolate, tea, fruit, cheese, and roasted nuts for their aroma, depth, and distinctive taste. Each recipe is carefully balanced to highlight the ingredient itself, without covering it with excessive sweetness or unnecessary complexity. The result is smooth, balanced gelato with a flavour that feels clear from the very first spoonful.",
-        "title_col_footer_1": "THƯƠNG HIỆU",
-        "links_col_footer_1": "thuong-hieu",
-        "title_col_footer_2": "HỖ TRỢ KHÁCH HÀNG",
-        "links_col_footer_2": "ho-tro-khach-hang",
-        "title_col_footer_3": "KẾT NỐI",
-        "links_col_footer_3": "ket-noi",
-        "display_footer_newsletter": true,
-        "title_footer_newsletter": "Đăng ký nhận bản tin",
-        "display_messenger_facebook": true,
-        "messenger_facebook_link": "#",
-        "messenger_facebook_image": "https://cdn.hstatic.net/files/1000173990/file/book-messenger-icon-bubble-isolated-on-transparent-background-free-png.webp",
-        "mini_search_suggest_title": "Nhóm sản phẩm gợi ý",
-        "mini_search_collection": "kem",
-        "display_collection_banner": true,
-        "collection_banner_image": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
-        "display_collection_brand": true,
-        "collection_brand_title": "Thương hiệu",
-        "display_collection_type": true,
-        "collection_type_title": "Loại sản phẩm",
-        "display_collection_price": true,
-        "collection_price_title": "Giá",
-        "min_filter_price": "0",
-        "max_filter_price": "10000000",
-        "display_search_suggest": true,
-        "title_search_suggest": "Có thể bạn sẽ thích",
-        "search_suggest_collection": "fe-test",
-        "about_hero_heading": "Flavours That Follow the Season",
-        "about_hero_subtitle": "Some flavours are made to stay. Others arrive only when the season feels right.\n\nAt Mamma, our collection brings together enduring classics and seasonal creations inspired by ingredients at their most expressive. Each seasonal flavour is produced in small batches and available for a limited time, giving us the freedom to explore something new while preserving the quality of every batch.\n\nA new fruit at its brightest, a familiar ingredient seen differently, or a flavour that simply belongs to a particular moment of the year—each season brings another reason to return.",
-        "about_split1_image": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
-        "about_split1_heading": "Ingredients Matter",
-        "about_split1_body": "Every flavour begins with an ingredient chosen for its natural character.\n\nWe select chocolate, tea, fruit, cheese, and roasted nuts for their aroma, depth, and distinctive taste. Each recipe is carefully balanced to highlight the ingredient itself, without covering it with excessive sweetness or unnecessary complexity.\n\nThe result is smooth, balanced gelato with a flavour that feels clear from the very first spoonful.",
-        "about_split1_button_text": "The Mamma Classics",
-        "about_split1_button_link": "/collections/all",
-        "about_quote_text": "\"The Mamma Classics are the flavours we return to again and again.\"",
-        "about_quote_attribution": "Founder of Mamma",
-        "about_quote_link_text": "Discover Our Flavors",
-        "about_quote_link_url": "/collections/all",
-        "about_split2_image": "https://cdn.hstatic.net/files/1000173990/file/banner_aboutus_2.png",
-        "about_split2_heading": "A Better Everyday Treat",
-        "about_split2_body": "We believe gelato does not need a special occasion.\n\nIt can be shared after dinner, brought to a gathering, given as a thoughtful gift, or enjoyed during a quiet moment for yourself.\n\nMamma is made to bring something special to the everyday—through familiar classics, seasonal discoveries, and flavours worth sharing.",
-        "about_split2_button_text": "View recipes",
-        "about_split2_button_link": "/collections/all",
-        "about_grid1_image": "https://cdn.hstatic.net/files/1000173990/file/cream_cheese_2.jpg",
-        "about_grid1_label": "Demo 1",
-        "about_grid1_link": "/collections/all",
-        "about_grid2_image": "https://cdn.hstatic.net/files/1000173990/file/hazelnut_2.jpg",
-        "about_grid2_label": "Demo 2",
-        "about_grid2_link": "/collections/all",
-        "about_grid3_image": "https://cdn.hstatic.net/files/1000173990/file/matcha_2.jpg",
-        "about_grid3_label": "Demo 3",
-        "about_grid3_link": "/collections/all",
-        "about_hero_bg": "#ffffff",
-        "about_hero_text": "#111111",
-        "about_hero_btn_bg": "#c8102e",
-        "about_hero_btn_text": "#ffffff",
-        "about_split1_bg": "#f4f4f4",
-        "about_split1_text": "#d60000",
-        "about_split1_btn_bg": "#083756",
-        "about_split1_btn_text": "#ffffff",
-        "about_quote_bg": "#ffffff",
-        "about_quote_btn_bg": "#083756",
-        "about_quote_btn_text": "#ffffff",
-        "about_split2_bg": "#f3f3f3",
-        "about_split2_text": "#111111",
-        "about_split2_btn_bg": "#083756",
-        "about_split2_btn_text": "#ffffff",
-        "about_hero_title": "#111111",
-        "about_hero_des": "#444444",
-        "about_split1_title": "#000000",
-        "about_split1_des": "#000000",
-        "about_quote_title": "#000000",
-        "about_quote_des": "#000000",
-        "about_split2_title": "#000000",
-        "about_split2_des": "#000000",
-        "color_mega_menu_underline": "#083756",
-        "color_mini_cart_accent": "#083756",
-        "color_mini_cart_accent_hover": "#083756",
-        "color_mini_search_view_all_hover": "#083756",
-        "color_collection_accent": "#083756",
-        "color_product_accent": "#083756",
-        "color_blog_accent": "#083756",
-        "color_article_accent": "#083756",
-        "color_contact_accent_dark": "#083756",
-        "page_description": "",
-        "share_fb_home": "https://cdn.hstatic.net/files/1000173990/file/anh_share_fb.jpg",
-        "color_product_accent_dark": "#b3b3b3",
-        "color_product_accent_light": "#000000",
-        "color_product_add_cart_bg": "#c0c0c0",
-        "color_product_add_cart_text": "#ffffff",
-        "color_product_add_cart_bg_hover": "#000000",
-        "color_product_add_cart_text_hover": "#ffffff",
-        "color_product_buy_now_bg": "#083756",
-        "color_product_buy_now_text": "#ffffff",
-        "color_product_buy_now_bg_hover": "#000000",
-        "color_product_buy_now_text_hover": "#ffffff",
-        "color_contact_accent": "#083756"
-    },
-    "presets": null
+
+"current": {
+
+
+"use_logo": false,
+
+
+"display_topbar": false,
+
+
+"background_topbar": "#000000",
+
+
+"color_topbar": "#ffffff",
+
+
+"use_item_topbar_1": true,
+
+
+"title_item_topbar_1": "Miễn phí vận chuyển",
+
+
+"link_item_topbar_1": "/collections/all",
+
+
+"use_item_topbar_2": true,
+
+
+"title_item_topbar_2": "Mua 2 tặng 1",
+
+
+"link_item_topbar_2": "/collections/all",
+
+
+"use_item_topbar_3": true,
+
+
+"title_item_topbar_3": "Giảm 30% khi mua hóa đơn từ 10tr",
+
+
+"link_item_topbar_3": "/collections/all",
+
+
+"main_menu": "main-menu-2026",
+
+
+"logo.png": "",
+
+
+"favicon.png": "",
+
+
+"use_banner_cards_1": true,
+
+
+"use_banner_card_1_1": true,
+
+
+"title_banner_card_1_1": "Banner 1",
+
+
+"link_banner_card_1_1": "/collections/all",
+
+
+"image_banner_card_1_1": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
+
+
+"alt_banner_card_1_1": "Banner 1",
+
+
+"use_banner_card_2_1": true,
+
+
+"title_banner_card_2_1": "Banner 1",
+
+
+"link_banner_card_2_1": "/collections/all",
+
+
+"image_banner_card_2_1": "https://cdn.hstatic.net/files/1000173990/file/banner_aboutus_2.png",
+
+
+"alt_banner_card_2_1": "Banner 1",
+
+
+"use_banner_cards_2": false,
+
+
+"use_banner_card_1_2": false,
+
+
+"title_banner_card_1_2": "",
+
+
+"link_banner_card_1_2": "",
+
+
+"image_banner_card_1_2": "",
+
+
+"alt_banner_card_1_2": "",
+
+
+"use_banner_card_2_2": false,
+
+
+"title_banner_card_2_2": "",
+
+
+"link_banner_card_2_2": "",
+
+
+"image_banner_card_2_2": "",
+
+
+"alt_banner_card_2_2": "",
+
+
+"use_banner_cards_3": false,
+
+
+"use_banner_card_1_3": false,
+
+
+"title_banner_card_1_3": "",
+
+
+"link_banner_card_1_3": "",
+
+
+"image_banner_card_1_3": "",
+
+
+"alt_banner_card_1_3": "",
+
+
+"use_banner_card_2_3": false,
+
+
+"title_banner_card_2_3": "",
+
+
+"link_banner_card_2_3": "",
+
+
+"image_banner_card_2_3": "",
+
+
+"alt_banner_card_2_3": "",
+
+
+"display_homepage_hero": true,
+
+
+"width_homepage_hero": "1920",
+
+
+"height_homepage_hero": "1080",
+
+
+"image_homepage_hero_desktop": "https://cdn.hstatic.net/files/1000173990/file/homepage_desktop_2d953705a5f04c789d205f704cd8550e.jpg",
+
+
+"image_homepage_hero_mobile": "https://cdn.hstatic.net/files/1000173990/file/homepage_mobile_9664d0207a564444a5a5248305936c85.jpg",
+
+
+"title_homepage_hero": "THE MAMMA'S CLASSICS",
+
+
+"button_text_homepage_hero": "Xem ngay",
+
+
+"link_button_homepage_hero": "/collections/all",
+
+
+"width_homepage_hero_desktop": "1942",
+
+
+"height_homepage_hero_desktop": "977",
+
+
+"width_homepage_hero_mobile": "430",
+
+
+"height_homepage_hero_mobile": " 699",
+
+
+"display_homepage_products": true,
+
+
+"collection_homepage_products": "fe-test",
+
+
+"limit_homepage_products": "6",
+
+
+"display_homepage_video": true,
+
+
+"width_homepage_video_desktop": "1200",
+
+
+"height_homepage_video_desktop": "800",
+
+
+"width_homepage_video_mobile": "1200",
+
+
+"height_homepage_video_mobile": "800",
+
+
+"youtube_id_homepage_video": "",
+
+
+"image_homepage_video_poster": "https://cdn.hstatic.net/files/1000173990/file/home_video_banner.jpg",
+
+
+"image_homepage_video_poster_mobile": "https://cdn.hstatic.net/files/1000173990/file/home_video_banner.jpg",
+
+
+"alt_homepage_video_poster": "Ingredients Matter",
+
+
+"title_homepage_video": "Ingredients Matter",
+
+
+"description_homepage_video": "Every flavour begins with an ingredient chosen for its natural character. We select chocolate, tea, fruit, cheese, and roasted nuts for their aroma, depth, and distinctive taste. Each recipe is carefully balanced to highlight the ingredient itself, without covering it with excessive sweetness or unnecessary complexity. The result is smooth, balanced gelato with a flavour that feels clear from the very first spoonful.",
+
+
+"title_col_footer_1": "THƯƠNG HIỆU",
+
+
+"links_col_footer_1": "thuong-hieu",
+
+
+"title_col_footer_2": "HỖ TRỢ KHÁCH HÀNG",
+
+
+"links_col_footer_2": "ho-tro-khach-hang",
+
+
+"title_col_footer_3": "KẾT NỐI",
+
+
+"links_col_footer_3": "ket-noi",
+
+
+"display_footer_newsletter": true,
+
+
+"title_footer_newsletter": "Đăng ký nhận bản tin",
+
+
+"display_messenger_facebook": true,
+
+
+"messenger_facebook_link": "https://m.me/1191165590737436",
+
+
+"messenger_facebook_image": "https://cdn.hstatic.net/files/1000173990/file/book-messenger-icon-bubble-isolated-on-transparent-background-free-png.webp",
+
+
+"mini_search_suggest_title": "Nhóm sản phẩm gợi ý",
+
+
+"mini_search_collection": "kem",
+
+
+"display_collection_banner": true,
+
+
+"collection_banner_image": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
+
+
+"display_collection_brand": true,
+
+
+"collection_brand_title": "Thương hiệu",
+
+
+"display_collection_type": true,
+
+
+"collection_type_title": "Loại sản phẩm",
+
+
+"display_collection_price": true,
+
+
+"collection_price_title": "Giá",
+
+
+"min_filter_price": "0",
+
+
+"max_filter_price": "10000000",
+
+
+"display_search_suggest": true,
+
+
+"title_search_suggest": "Có thể bạn sẽ thích",
+
+
+"search_suggest_collection": "fe-test",
+
+
+"about_hero_heading": "Flavours That Follow the Season",
+
+
+"about_hero_subtitle": "Some flavours are made to stay. Others arrive only when the season feels right.\n\nAt Mamma, our collection brings together enduring classics and seasonal creations inspired by ingredients at their most expressive. Each seasonal flavour is produced in small batches and available for a limited time, giving us the freedom to explore something new while preserving the quality of every batch.\n\nA new fruit at its brightest, a familiar ingredient seen differently, or a flavour that simply belongs to a particular moment of the year—each season brings another reason to return.",
+
+
+"about_split1_image": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
+
+
+"about_split1_heading": "Ingredients Matter",
+
+
+"about_split1_body": "Every flavour begins with an ingredient chosen for its natural character.\n\nWe select chocolate, tea, fruit, cheese, and roasted nuts for their aroma, depth, and distinctive taste. Each recipe is carefully balanced to highlight the ingredient itself, without covering it with excessive sweetness or unnecessary complexity.\n\nThe result is smooth, balanced gelato with a flavour that feels clear from the very first spoonful.",
+
+
+"about_split1_button_text": "The Mamma Classics",
+
+
+"about_split1_button_link": "/collections/all",
+
+
+"about_quote_text": "\"The Mamma Classics are the flavours we return to again and again.\"",
+
+
+"about_quote_attribution": "Founder of Mamma",
+
+
+"about_quote_link_text": "Discover Our Flavors",
+
+
+"about_quote_link_url": "/collections/all",
+
+
+"about_split2_image": "https://cdn.hstatic.net/files/1000173990/file/banner_aboutus_2.png",
+
+
+"about_split2_heading": "A Better Everyday Treat",
+
+
+"about_split2_body": "We believe gelato does not need a special occasion.\n\nIt can be shared after dinner, brought to a gathering, given as a thoughtful gift, or enjoyed during a quiet moment for yourself.\n\nMamma is made to bring something special to the everyday—through familiar classics, seasonal discoveries, and flavours worth sharing.",
+
+
+"about_split2_button_text": "View recipes",
+
+
+"about_split2_button_link": "/collections/all",
+
+
+"about_grid1_image": "https://cdn.hstatic.net/files/1000173990/file/cream_cheese_2.jpg",
+
+
+"about_grid1_label": "Demo 1",
+
+
+"about_grid1_link": "/collections/all",
+
+
+"about_grid2_image": "https://cdn.hstatic.net/files/1000173990/file/hazelnut_2.jpg",
+
+
+"about_grid2_label": "Demo 2",
+
+
+"about_grid2_link": "/collections/all",
+
+
+"about_grid3_image": "https://cdn.hstatic.net/files/1000173990/file/matcha_2.jpg",
+
+
+"about_grid3_label": "Demo 3",
+
+
+"about_grid3_link": "/collections/all",
+
+
+"about_hero_bg": "#ffffff",
+
+
+"about_hero_text": "#111111",
+
+
+"about_hero_btn_bg": "#c8102e",
+
+
+"about_hero_btn_text": "#ffffff",
+
+
+"about_split1_bg": "#f4f4f4",
+
+
+"about_split1_text": "#d60000",
+
+
+"about_split1_btn_bg": "#083756",
+
+
+"about_split1_btn_text": "#ffffff",
+
+
+"about_quote_bg": "#ffffff",
+
+
+"about_quote_btn_bg": "#083756",
+
+
+"about_quote_btn_text": "#ffffff",
+
+
+"about_split2_bg": "#f3f3f3",
+
+
+"about_split2_text": "#111111",
+
+
+"about_split2_btn_bg": "#083756",
+
+
+"about_split2_btn_text": "#ffffff",
+
+
+"about_hero_title": "#111111",
+
+
+"about_hero_des": "#444444",
+
+
+"about_split1_title": "#000000",
+
+
+"about_split1_des": "#000000",
+
+
+"about_quote_title": "#000000",
+
+
+"about_quote_des": "#000000",
+
+
+"about_split2_title": "#000000",
+
+
+"about_split2_des": "#000000",
+
+
+"color_mega_menu_underline": "#083756",
+
+
+"color_mini_cart_accent": "#083756",
+
+
+"color_mini_cart_accent_hover": "#083756",
+
+
+"color_mini_search_view_all_hover": "#083756",
+
+
+"color_collection_accent": "#083756",
+
+
+"color_product_accent": "#083756",
+
+
+"color_blog_accent": "#083756",
+
+
+"color_article_accent": "#083756",
+
+
+"color_contact_accent_dark": "#083756",
+
+
+"page_description": "",
+
+
+"share_fb_home": "https://cdn.hstatic.net/files/1000173990/file/anh_share_fb.jpg",
+
+
+"color_product_accent_dark": "#b3b3b3",
+
+
+"color_product_accent_light": "#000000",
+
+
+"color_product_add_cart_bg": "#c0c0c0",
+
+
+"color_product_add_cart_text": "#ffffff",
+
+
+"color_product_add_cart_bg_hover": "#000000",
+
+
+"color_product_add_cart_text_hover": "#ffffff",
+
+
+"color_product_buy_now_bg": "#083756",
+
+
+"color_product_buy_now_text": "#ffffff",
+
+
+"color_product_buy_now_bg_hover": "#000000",
+
+
+"color_product_buy_now_text_hover": "#ffffff",
+
+
+"color_contact_accent": "#083756",
+
+
+"base_font": "Barlow+Condensed:400,400i,500,600,700",
+
+
+"favicon_png_96": "https://cdn.hstatic.net/files/1000173990/file/favicon_4fe7e48d7006456d8f03d7b1f70f376c.png",
+
+
+"favicon_ico": "https://cdn.hstatic.net/files/1000173990/file/favicon_ico_256px.jpg",
+
+
+"apple_touch_icon_180": "https://cdn.hstatic.net/files/1000173990/file/appletouch_180px.jpg",
+
+
+"display_about_grid": false
+
+},
+
+"presets": null
 }
