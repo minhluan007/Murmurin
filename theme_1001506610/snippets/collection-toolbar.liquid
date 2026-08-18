@@ -4,7 +4,7 @@
   Filter HTML chỉ render 1 lần trong .collection-sidebar__body
 {%- endcomment -%}
 
-<div class="collection-toolbar">
+<div class="collection-toolbar {% if settings.display_topbar %}has-topbar{% else %}no-topbar{% endif %}">
   <div class="collection-toolbar__inner container-fluid">
     <button
       type="button"

@@ -210,7 +210,15 @@ MLPRO.LoopItem = {
       error: function () {},
     });
   },
+  stripHtml: function(text) {
+    return text.replace(/<[^>]*>?/g, '').trim();
+  },
+  truncate: function(text, length) {
+    var self = this;
+    return text.length > length ? self.stripHtml(text).substring(0, length) + '...' : self.stripHtml(text).trim();
+  },
   loopHtml: function (data, collectionJS = false, isSlider = false) {
+    var self = this;
     var list = data.products,
       htmlItem = '',
       noImage = 'https://file.hstatic.net/200000642007/file/loading-product_166be939a5b54a2aa4d9653d29b9b21d.jpg',
@@ -386,7 +394,7 @@ MLPRO.LoopItem = {
                 ${product.compare_at_price > product.price ? `<span class="product-loop__compare-price" data-compare-price="${product.compare_at_price}">
                 ${Haravan.formatMoney(product.compare_at_price, shop.moneyFormat)}</span>` : ''}
               </div>
-              <p class="product-loop__desc" data-description="${product.metadescription}">${product.metadescription.length > 80 ? product.metadescription.substring(0, 80) + '...' : product.metadescription}</p>
+              <p class="product-loop__desc">${self.truncate(product.metadescription, 80)}</p>
             </div>
           </a>
         </div>`;

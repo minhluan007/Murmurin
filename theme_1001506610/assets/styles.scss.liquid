@@ -3581,6 +3581,7 @@ body.open-mini-cart {
   }
 }
 
+
 .collection-toolbar {
   position: sticky;
   top: 112px;
@@ -3588,9 +3589,17 @@ body.open-mini-cart {
   background: var(--collection-accent);
   color: #fff;
 
+  &.no-topbar {
+    top: 72px;
+    @media (max-width: 991px) {
+      top: 56px;
+    }
+  }
+
+
   @media(max-width: 991px) {
     top: 96px;
-    z-index: 9999;
+    z-index: 20;
     .open-menu-mb &,
     .open-mini-cart & {
       z-index: 20;
@@ -5960,6 +5969,7 @@ body.open-collection-filter {
   }
 }
 .zalo-chat-widget {
+  display: none !important;
   @media (max-width: 991px) {
     right: 20px !important;
   }
