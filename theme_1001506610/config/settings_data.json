@@ -18,7 +18,7 @@
 "use_item_topbar_1": true,
 
 
-"title_item_topbar_1": "Miễn phí vận chuyển",
+"title_item_topbar_1": "Free Shipping",
 
 
 "link_item_topbar_1": "/collections/all",
@@ -27,7 +27,7 @@
 "use_item_topbar_2": true,
 
 
-"title_item_topbar_2": "Mua 2 tặng 1",
+"title_item_topbar_2": "Buy 2 Get 1 Free",
 
 
 "link_item_topbar_2": "/collections/all",
@@ -36,13 +36,13 @@
 "use_item_topbar_3": true,
 
 
-"title_item_topbar_3": "Giảm 30% khi mua hóa đơn từ 10tr",
+"title_item_topbar_3": "30% Off Orders Over 10 Million VND",
 
 
 "link_item_topbar_3": "/collections/all",
 
 
-"main_menu": "main-menu-2026",
+"main_menu": "menu",
 
 
 "logo.png": "",
@@ -57,7 +57,7 @@
 "use_banner_card_1_1": true,
 
 
-"title_banner_card_1_1": "Banner 1",
+"title_banner_card_1_1": "Combo",
 
 
 "link_banner_card_1_1": "/collections/all",
@@ -69,7 +69,7 @@
 "alt_banner_card_1_1": "Banner 1",
 
 
-"use_banner_card_2_1": true,
+"use_banner_card_2_1": false,
 
 
 "title_banner_card_2_1": "Banner 1",
@@ -168,7 +168,7 @@
 "title_homepage_hero": "THE MAMMA'S CLASSICS",
 
 
-"button_text_homepage_hero": "Xem ngay",
+"button_text_homepage_hero": "View All",
 
 
 "link_button_homepage_hero": "/collections/all",
@@ -192,7 +192,7 @@
 "collection_homepage_products": "fe-test",
 
 
-"limit_homepage_products": "6",
+"limit_homepage_products": "24",
 
 
 "display_homepage_video": true,
@@ -228,19 +228,19 @@
 "description_homepage_video": "Every flavour begins with an ingredient chosen for its natural character. We select chocolate, tea, fruit, cheese, and roasted nuts for their aroma, depth, and distinctive taste. Each recipe is carefully balanced to highlight the ingredient itself, without covering it with excessive sweetness or unnecessary complexity. The result is smooth, balanced gelato with a flavour that feels clear from the very first spoonful.",
 
 
-"title_col_footer_1": "THƯƠNG HIỆU",
+"title_col_footer_1": "ABOUT",
 
 
-"links_col_footer_1": "thuong-hieu",
+"links_col_footer_1": "about",
 
 
-"title_col_footer_2": "HỖ TRỢ KHÁCH HÀNG",
+"title_col_footer_2": "SERVICE",
 
 
-"links_col_footer_2": "ho-tro-khach-hang",
+"links_col_footer_2": "service",
 
 
-"title_col_footer_3": "KẾT NỐI",
+"title_col_footer_3": "SOCIAL",
 
 
 "links_col_footer_3": "ket-noi",
@@ -249,10 +249,10 @@
 "display_footer_newsletter": true,
 
 
-"title_footer_newsletter": "Đăng ký nhận bản tin",
+"title_footer_newsletter": "JOIN OUR LIST",
 
 
-"display_messenger_facebook": true,
+"display_messenger_facebook": false,
 
 
 "messenger_facebook_link": "https://m.me/1191165590737436",
@@ -261,7 +261,7 @@
 "messenger_facebook_image": "https://cdn.hstatic.net/files/1000173990/file/book-messenger-icon-bubble-isolated-on-transparent-background-free-png.webp",
 
 
-"mini_search_suggest_title": "Nhóm sản phẩm gợi ý",
+"mini_search_suggest_title": "New Drop",
 
 
 "mini_search_collection": "kem",
@@ -273,7 +273,7 @@
 "collection_banner_image": "https://cdn.hstatic.net/files/1000173990/file/banner_collection.png",
 
 
-"display_collection_brand": true,
+"display_collection_brand": false,
 
 
 "collection_brand_title": "Thương hiệu",
@@ -282,13 +282,13 @@
 "display_collection_type": true,
 
 
-"collection_type_title": "Loại sản phẩm",
+"collection_type_title": "Type",
 
 
 "display_collection_price": true,
 
 
-"collection_price_title": "Giá",
+"collection_price_title": "Price",
 
 
 "min_filter_price": "0",
@@ -300,7 +300,7 @@
 "display_search_suggest": true,
 
 
-"title_search_suggest": "Có thể bạn sẽ thích",
+"title_search_suggest": "New Drop",
 
 
 "search_suggest_collection": "fe-test",
@@ -381,7 +381,7 @@
 "about_grid3_link": "/collections/all",
 
 
-"about_hero_bg": "#ffffff",
+"about_hero_bg": "#083756",
 
 
 "about_hero_text": "#111111",
@@ -426,10 +426,10 @@
 "about_split2_btn_text": "#ffffff",
 
 
-"about_hero_title": "#111111",
+"about_hero_title": "#ffffff",
 
 
-"about_hero_des": "#444444",
+"about_hero_des": "#ffffff",
 
 
 "about_split1_title": "#000000",

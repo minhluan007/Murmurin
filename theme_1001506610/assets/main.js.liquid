@@ -394,7 +394,7 @@ MLPRO.LoopItem = {
                 ${product.compare_at_price > product.price ? `<span class="product-loop__compare-price" data-compare-price="${product.compare_at_price}">
                 ${Haravan.formatMoney(product.compare_at_price, shop.moneyFormat)}</span>` : ''}
               </div>
-              <p class="product-loop__desc">${self.truncate(product.metadescription, 80)}</p>
+              <p class="product-loop__desc">${product.metadescription}</p>
             </div>
           </a>
         </div>`;
